@@ -42,16 +42,16 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <section class="card full" id="npcard"><h2>🎵 Now playing</h2><div id="np" style="font-size:20px;font-weight:bold"></div><div class="note" id="npsub"></div><div class="note" id="slowlog"></div><button class="pb" id="slowdemo" style="opacity:.6;margin-top:6px">Demo: simulate slow sales</button> <button class="pb" id="npgo" style="margin-top:6px">Open Tasks &amp; Music</button></section>
 </main>
 <main id="tab-tasks" style="display:none">
-<section class="card full"><h2>🎵 Music Stations</h2>
+<section class="card" style="order:2"><h2>🎵 Music Stations</h2>
 <div id="progress"></div><div class="bar"><i id="pbar"></i></div>
 <div id="stations"></div></section>
 
-<section class="card"><h2>✅ Today's Tasks</h2>
+<section class="card" style="order:1"><h2>✅ Today's Tasks</h2>
 <select id="me" style="display:none"></select>
 <div id="tasks"></div>
-<label class="note" style="display:block"><input type="checkbox" id="auto" checked> Demo: Scout reviews each photo in about 1 minute (turns green or red by itself). Uncheck to use the manual queue only.</label><div class="note"><a href="#" id="rst">Reset demo data</a></div>
+<label class="note" style="display:block"><input type="checkbox" id="auto" checked> Demo: Scout reviews each photo in about 1 minute (turns green or red by itself). Uncheck to use the manual queue only.</label><label class="note" style="display:block">Demo: pretend the next photo took <input id="demomin" type="number" min="0" style="width:60px"> minutes (blank = real time since the task was claimed)</label><div class="note"><a href="#" id="rst">Reset demo data</a></div>
 <div class="note">Tap a task and enter your code so we know who did it. The photo goes to Scout for approval before it counts. If Scout sends it back, the note shows here.</div></section>
-<section class="card full"><h2>🔍 Scout's Approval Queue</h2><div id="queue"></div><div class="note">Scout (Kristen's agent) reviews each photo. Points and music unlocks only count after approval. Demo: Approve / Send back buttons stand in for Scout.</div></section>
+<section class="card full" style="order:3"><h2>🔍 Scout's Approval Queue</h2><div id="queue"></div><div class="note">Scout (Kristen's agent) reviews each photo. Points and music unlocks only count after approval. Demo: Approve / Send back buttons stand in for Scout.</div></section>
 </main>
 <main id="tab-crew" style="display:none">
 <section class="card full"><h2>🏆 Crew Board</h2><div id="kidboard"></div></section>
@@ -94,7 +94,7 @@ const bi=document.createElement('input');bi.type='file';bi.accept='image/*';bi.s
 bi.onchange=()=>{const f=bi.files[0];if(f&&baseIdx!=null){const i=baseIdx;shrink(f,u=>{baseline[i]=u;saveState();render();renderPhone()})}bi.value=''};
 let rejected={};let done=new Set();let pending={};let playing=0;let pickIdx=null;
 const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.setAttribute('capture','environment');
-fi.onchange=()=>{const f=fi.files[0];if(f&&pickIdx!=null){const i=pickIdx;shrink(f,u=>{pending[i]=u;delete awaiting[i];delete rejected[i];saveState();render();renderPhone()})}fi.value=''};
+fi.onchange=()=>{const f=fi.files[0];if(f&&pickIdx!=null){const i=pickIdx;shrink(f,u=>{pending[i]=u;delete awaiting[i];delete rejected[i];try{timingCheck(i)}catch(e){}delete claimAt[i];saveState();render();renderPhone()})}fi.value=''};
 const DEMO='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="88" height="88"><rect width="88" height="88" fill="#ffd23f"/><text x="44" y="58" font-size="44" text-anchor="middle">📸</text></svg>');
 
 let clockedIn=false,acked=false,clockAt=null;
@@ -105,6 +105,10 @@ const lists={open:new Set(),close:new Set()};let phase="open";let signoffs=[];
 const prevBy={open:"Jake",close:"Mia"}; // demo: who did the other list last shift
 const grades=[];let mgrNotes=[];
 const listName={open:"Opening",close:"Closing"};
+const DEFEXP={"Wipe down counters":10,"Restock cups & lids":10,"Refill candy bins":20,"Clean shake machine":25,"Sweep floor":10,"Wipe soda station":10,"Take out trash":5,"Front window clean":20};
+const FAST=0.4,SLOW=2;const claimAt={};
+function expMin(i){return tasks[i][2]||DEFEXP[tasks[i][0]]||10}
+function timingCheck(i){const dm=document.getElementById("demomin"),v=dm&&dm.value!==""?+dm.value:null;const mins=v!==null?v:(claimAt[i]?(Date.now()-claimAt[i])/60000:null);if(mins===null)return;const e=expMin(i),nm=(who[i]||[me.value]).join(" + "),t=tasks[i][0],m=Math.round(mins);let note=null;if(mins<e*FAST)note="Quick one: "+t+" took about "+m+" min and the usual is about "+e+". Quality beats speed. Take another look at the spots that are easy to miss next time.";else if(mins>e*SLOW)note=t+" took about "+m+" min and the usual is about "+e+". Anything in the way? Ask Kristen for a tip or a hand next time.";if(note){grades.push({by:"Scout (timing)",target:nm,list:"task",marks:[],note,status:"pending",timing:true,task:t,mins:m,exp:e,kind:mins<e*FAST?"too fast":"way over"});if(dm)dm.value=""}else if(dm)dm.value=""}
 function gradePanel(k,L){
  // opener grades the previous closing list; closer grades today's opening list
  const target=k==="close"?prevBy.open:prevBy.close; // person being graded
@@ -126,7 +130,7 @@ function mgrPanel(){
  const w=document.createElement("div");w.className="gp mgr";
  if(!clockedIn||me.value!=="Kristen"){w.className="gp nopk";w.innerHTML="<b>🔒 Manager review</b><div class=\"note\">Only Kristen can see all grades and notes.</div>";return w}
  const flag=n=>/stupid|lazy|dumb|hate|idiot|trash/i.test(n);
- const line=(g,i)=>`<div class="gline"><b>${g.by}</b> graded ${g.target}'s ${listName[g.list]} list: ${g.marks.filter(m=>m[1]!=="Good").map(m=>"⚠ "+m[0]).join(", ")||"all good ✅"}<br><i>${g.note}</i><br><small>🤖 Scout check: ${flag(g.note)?"⚠ tone flagged, edit before posting":"tone OK, specific and fair"}</small>${g.status==="pending"?`<br><button class="apv" data-i="${i}">Approve &amp; post to ${g.target}</button> <button class="hld" data-i="${i}" style="background:#999">Hold</button>`:`<br><small>${g.status==="posted"?"✅ Posted to "+g.target:"⏸ Held"}</small>`}</div>`;
+ const line=(g,i)=>`<div class="gline"><b>${g.by}</b> ${g.timing?"timing note for "+g.target+": "+g.task+" "+g.kind+" ("+g.mins+" min vs about "+g.exp+")":"graded "+g.target+"'s "+listName[g.list]+" list: "+(g.marks.filter(m=>m[1]!=="Good").map(m=>"⚠ "+m[0]).join(", ")||"all good ✅")}<br><i>${g.note}</i><br><small>🤖 Scout check: ${flag(g.note)?"⚠ tone flagged, edit before posting":"tone OK, specific and fair"}</small>${g.status==="pending"?`<br><button class="apv" data-i="${i}">Approve &amp; post to ${g.target}</button> <button class="hld" data-i="${i}" style="background:#999">Hold</button>`:`<br><small>${g.status==="posted"?"✅ Posted to "+g.target:"⏸ Held"}</small>`}</div>`;
  w.innerHTML="<b>📋 Manager review (Kristen only)</b><div class=\"note\">Peer notes wait here. The graded teammate only sees them after approval.</div>"+(grades.length?grades.map(line).join(""):'<div class="note">No grades yet. Clock out, clock in as a crew member, and submit one.</div>')+'<textarea placeholder="Manager note for the crew"></textarea><button>Post note</button>'+mgrNotes.map(n=>`<div class="gline">📌 ${n}</div>`).join("");
  w.querySelectorAll(".apv").forEach(b=>b.onclick=()=>{grades[+b.dataset.i].status="posted";renderLists()});
  w.querySelectorAll(".hld").forEach(b=>b.onclick=()=>{grades[+b.dataset.i].status="held";renderLists()});
@@ -270,7 +274,7 @@ function getDoers(isTeam){
   const c2=prompt("Other person's code");const b=byCode(c2);if(!b||b===a){alert("Second code not valid. Recording just you.")}else names.push(b)}
  return names}
 const listWho={open:{},close:{}};
-function submit(i){const names=getDoers(team.has(i));if(!names)return;who[i]=names;awaiting[i]=names;delete rejected[i];saveState();render()}
+function submit(i){const names=getDoers(team.has(i));if(!names)return;who[i]=names;awaiting[i]=names;claimAt[i]=Date.now();delete rejected[i];saveState();render()}
 const me=document.getElementById("me");const me2=document.getElementById("me2");crew.forEach(c=>{me.add(new Option(c,c));me2.add(new Option(c,c))});me2.onchange=()=>{me.value=me2.value;me.onchange()};
 function score(){return [...done].reduce((s,i)=>s+tasks[i][1],0)}
 function renderNP(){const e=document.getElementById('np');if(!e)return;e.textContent=stations[playing][0];document.getElementById('npsub').textContent=score()+' points unlocked so far. Better stations unlock as tasks get approved.'}
@@ -287,7 +291,7 @@ function render(){saveState();try{renderWho();renderNP()}catch(e){}try{renderIde
  const t=document.getElementById("tasks");t.innerHTML="";
  tasks.forEach((k,i)=>{if(removed.has(i))return;const d=document.createElement("div");const isP=i in pending;d.className="task"+(done.has(i)?" done":isP?" pending":(i in awaiting)?" pending":(i in rejected)?" rejected":"");
   const status=(i in awaiting)?"📱 Waiting for "+awaiting[i].join(" + ")+"'s photo from their phone":done.has(i)?"✅ Approved":isP?"⏳ Pending - waiting approval":(i in rejected)?"❌ Scout sent it back - redo and upload a new photo":"";
-  d.innerHTML=`<span>${done.has(i)?"✅":isP?"⏳":"⬜"}</span><span>${k[0]}${team.has(i)?'<span class="tag">👥 team task</span>':''}${isP?'<span class="tag" style="background:#ffd23f">⏳ pending - waiting approval</span><span class="cd" data-i="'+i+'"></span>':''}<br><small>${status}</small>${(i in who&&(isP||done.has(i)))?`<div class="base">Done by: ${who[i].join(' + ')}</div>`:''}${(i in rejected&&!isP&&!done.has(i))?`<div class="scoutnote"><b>Scout's note:</b> ${rejected[i]}</div>`:''}<div class="base">${i in baseline?`<img src="${baseline[i]}" style="width:24px;height:24px">Baseline set by Kristen`:'No baseline yet (Kristen adds it from her phone)'} </div></span>${isP?`<img src="${pending[i]}">`:""}<span class="pts">+${k[1]}</span>`;
+  d.innerHTML=`<span>${done.has(i)?"✅":isP?"⏳":"⬜"}</span><span>${k[0]}<span class="tag" style="background:#9e9e9e">⏱ about ${expMin(i)} min</span>${team.has(i)?'<span class="tag">👥 team task</span>':''}${isP?'<span class="tag" style="background:#ffd23f">⏳ pending - waiting approval</span><span class="cd" data-i="'+i+'"></span>':''}<br><small>${status}</small>${(i in who&&(isP||done.has(i)))?`<div class="base">Done by: ${who[i].join(' + ')}</div>`:''}${(i in rejected&&!isP&&!done.has(i))?`<div class="scoutnote"><b>Scout's note:</b> ${rejected[i]}</div>`:''}<div class="base">${i in baseline?`<img src="${baseline[i]}" style="width:24px;height:24px">Baseline set by Kristen`:'No baseline yet (Kristen adds it from her phone)'} </div></span>${isP?`<img src="${pending[i]}">`:""}<span class="pts">+${k[1]}</span>`;
   if(!done.has(i)&&!isP&&!(i in awaiting)){d.onclick=()=>{if(!clockedIn){alert('Clock in first so you can see today\'s plan.');return}submit(i)}}
   d.appendChild(helpBtn(k[0]));
   t.appendChild(d)});
