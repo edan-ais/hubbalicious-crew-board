@@ -49,9 +49,8 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <section class="card" style="order:1"><h2>✅ Today's Tasks</h2>
 <select id="me" style="display:none"></select>
 <div id="tasks"></div>
-<label class="note" style="display:block"><input type="checkbox" id="auto" checked> Demo: Scout reviews each photo in about 1 minute (turns green or red by itself). Uncheck to use the manual queue only.</label><label class="note" style="display:block">Demo: pretend the next photo took <input id="demomin" type="number" min="0" style="width:60px"> minutes (blank = real time since the task was claimed)</label><div class="note"><a href="#" id="rst">Reset demo data</a></div>
-<div class="note">Tap a task and enter your code so we know who did it. The photo goes to Scout for approval before it counts. If Scout sends it back, the note shows here.</div></section>
-<section class="card full" style="order:3"><h2>🔍 Scout's Approval Queue</h2><div id="queue"></div><div class="note">Scout (Kristen's agent) reviews each photo. Points and music unlocks only count after approval. Demo: Approve / Send back buttons stand in for Scout.</div></section>
+<label class="note" style="display:block">Demo: pretend the next task took <input id="demomin" type="number" min="0" style="width:60px"> minutes (blank = real time since the person's last check-off or clock-in)</label><div class="note"><a href="#" id="rst">Reset demo data</a></div>
+<div class="note">Tap a task and enter your code so we know who did it. It checks off and counts right away. Kristen sees any notes in her own view.</div></section>
 </main>
 <main id="tab-crew" style="display:none">
 <section class="card full"><h2>🏆 Crew Board</h2><div id="kidboard"></div></section>
@@ -223,7 +222,7 @@ function renderPhone(){if(!PHONE)return;const el=document.getElementById("phbody
 
 const since={};const notesBank=["Counter still has crumbs on the left side. Wipe it again and retake from the same angle.","Photo is blurry and I can't tell it matches the baseline. Retake it in better light.","Looks like the bins are only half refilled. Top them off and send a new photo."];
 function countdown(){document.querySelectorAll(".cd").forEach(e=>{const i=e.dataset.i;if(since[i]){const l=Math.max(0,60-Math.floor((Date.now()-since[i])/1000));e.textContent=" (Scout reviewing, ~"+l+"s)"}})}
-if(!PHONE)setInterval(()=>{const on=document.getElementById("auto").checked;let ch=false;Object.keys(since).forEach(k=>{if(!(k in pending)||done.has(+k))delete since[k]});
+if(!PHONE)setInterval(()=>{const on=false;let ch=false;Object.keys(since).forEach(k=>{if(!(k in pending)||done.has(+k))delete since[k]});
  Object.keys(pending).forEach(i=>{if(done.has(+i))return;if(!since[i])since[i]=Date.now();
   if(on&&Date.now()-since[i]>=60000){delete since[i];if(Math.random()<.7){done.add(+i)}else{rejected[i]=notesBank[Math.floor(Math.random()*notesBank.length)];delete pending[i]}ch=true}});
  if(ch)render();else countdown()},1000);
@@ -286,7 +285,7 @@ function getDoers(isTeam){
   const c2=prompt("Other person's code");const b=byCode(c2);if(!b||b===a){alert("Second code not valid. Recording just you.")}else names.push(b)}
  return names}
 const listWho={open:{},close:{}};
-function submit(i){const names=getDoers(team.has(i));if(!names)return;who[i]=names;awaiting[i]=names;claimAt[i]=Date.now();delete rejected[i];saveState();render()}
+let lastEvt=0;function submit(i){const names=getDoers(team.has(i));if(!names)return;who[i]=names;claimAt[i]=lastEvt||(clockAt?clockAt.getTime():Date.now());delete rejected[i];done.add(i);try{timingCheck(i)}catch(e){}delete claimAt[i];lastEvt=Date.now();saveState();render()}
 const me=document.getElementById("me");const me2=document.getElementById("me2");crew.forEach(c=>{me.add(new Option(c,c));me2.add(new Option(c,c))});me2.onchange=()=>{me.value=me2.value;me.onchange()};
 function score(){return [...done].reduce((s,i)=>s+tasks[i][1],0)}
 function renderNP(){const e=document.getElementById('np');if(!e)return;e.textContent=stations[playing][0];document.getElementById('npsub').textContent=score()+' points unlocked so far. Better stations unlock as tasks get approved.'}
@@ -317,15 +316,11 @@ function renderWho(){const el=document.getElementById('who');el.innerHTML=SCHEDU
 function render(){saveState();try{renderWho();renderNP();renderStaff()}catch(e){}try{renderIdeas()}catch(e){}
  const t=document.getElementById("tasks");t.innerHTML="";
  tasks.map((k,i)=>i).sort((a,b)=>tier(a)-tier(b)||a-b).forEach(i=>{const k=tasks[i];if(removed.has(i))return;const d=document.createElement("div");const isP=i in pending;d.className="task"+(done.has(i)?" done":isP?" pending":(i in awaiting)?" pending":(i in rejected)?" rejected":"");
-  const status=(i in awaiting)?"📱 Waiting for "+awaiting[i].join(" + ")+"'s photo from their phone":done.has(i)?"✅ Approved":isP?"⏳ Pending - waiting approval":(i in rejected)?"❌ Scout sent it back - redo and upload a new photo":"";
+  const status=(i in awaiting)?"📱 Waiting for "+awaiting[i].join(" + ")+"'s photo from their phone":done.has(i)?"✅ Done":isP?"⏳ Pending - waiting approval":(i in rejected)?"❌ Scout sent it back - redo and upload a new photo":"";
   d.innerHTML=`<span>${done.has(i)?"✅":isP?"⏳":"⬜"}</span><span>${k[0]}<span class="tag" style="background:${["","#c2185b","#ef6c00","#2e7d32"][tier(i)]}">${["","1 Production","2 Restock","3 Cleaning"][tier(i)]}</span><span class="tag" style="background:#9e9e9e">⏱ about ${expMin(i)} min</span>${team.has(i)?'<span class="tag">👥 team task</span>':''}${isP?'<span class="tag" style="background:#ffd23f">⏳ pending - waiting approval</span><span class="cd" data-i="'+i+'"></span>':''}<br><small>${status}</small>${(i in who&&(isP||done.has(i)))?`<div class="base">Done by: ${who[i].join(' + ')}</div>`:''}${(i in rejected&&!isP&&!done.has(i))?`<div class="scoutnote"><b>Scout's note:</b> ${rejected[i]}</div>`:''}<div class="base">${i in baseline?`<img src="${baseline[i]}" style="width:24px;height:24px">Baseline set by Kristen`:'No baseline yet (Kristen adds it from her phone)'} </div></span>${isP?`<img src="${pending[i]}">`:""}<span class="pts">+${k[1]}</span>`;
   if(!done.has(i)&&!isP&&!(i in awaiting)){d.onclick=()=>{if(!clockedIn){alert('Clock in first so you can see today\'s plan.');return}submit(i)}}
   d.appendChild(helpBtn(k[0]));
   t.appendChild(d)});
- const q=document.getElementById("queue");const keys=Object.keys(pending).filter(i=>!done.has(+i));
- q.innerHTML=keys.length?"":'<div class="note">Nothing waiting. Scout is bored.</div>';
- keys.forEach(i=>{const d=document.createElement("div");d.className="q";d.innerHTML=`<div class="cmp"><figure><img src="${i in baseline?baseline[i]:BASEDEMO}"><br>Baseline</figure><figure><img src="${pending[i]}"><br>Submitted</figure></div><div><b>${(who[i]||[me.value]).join(' + ')}</b>: ${tasks[i][0]}<br><small>Scout: does it match the baseline?${i in baseline?'':' (no baseline yet, Kristen needs to set one)'}</small></div><div class="sp"><button class="ok">Approve</button><button class="no">Send back</button></div>`;
-  d.querySelector('.ok').onclick=()=>{done.add(+i);render()};d.querySelector('.no').onclick=()=>{const n=prompt('Scout\'s note: why is this not accepted?','Counter still has crumbs on the left side. Wipe it again and retake from the same angle.');if(n===null)return;rejected[i]=n||'Does not match the baseline photo.';delete pending[i];render()};q.appendChild(d)});
  const s=score();const next=stations.find(x=>x[2]>s);
  document.getElementById("progress").textContent=`${s} points`+(next?` - ${next[2]-s} more to unlock "${next[0]}"`:" - everything unlocked!");
  document.getElementById("pbar").style.width=Math.min(100,s/8*100)+"%";
