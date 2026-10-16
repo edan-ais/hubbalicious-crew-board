@@ -355,4 +355,7 @@ me.onchange=()=>{me2.value=me.value;clockedIn=false;acked=false;lists.open.clear
 loadState();render();renderClock();renderLists();
 if(PHONE){document.querySelectorAll('.bar2,.tabs,main').forEach(x=>x.style.display='none');document.getElementById('phone').style.display='block';document.querySelector('header p').textContent='Phone: snap your task photos here';renderPhone()}
 
+
+(function(){var wl=null;async function get(){try{if('wakeLock' in navigator&&document.visibilityState==='visible'&&!wl){wl=await navigator.wakeLock.request('screen');wl.addEventListener('release',function(){wl=null})}}catch(e){wl=null}}
+get();document.addEventListener('visibilitychange',get);['click','touchstart','keydown'].forEach(function(ev){document.addEventListener(ev,get,{passive:true})});setInterval(get,60000)})();
 </script><footer style="text-align:center;font-size:13px;color:#6b5b7b;padding:14px 10px 22px">📹 You're on camera. Store cameras are recording in this area.</footer></body></html>

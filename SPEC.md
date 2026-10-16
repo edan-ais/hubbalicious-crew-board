@@ -34,6 +34,8 @@ For Edan, who is wiring this up for real. Written from the working template at h
 
 **Why the top-right button.** David wanted it where staff look without hunting. The header is shared by every tab, so one button covers every screen.
 
+- **Screen stays on.** The page requests a Screen Wake Lock (`navigator.wakeLock`) and asks again whenever the tab becomes visible, on any tap, and once a minute, because browsers drop the lock when the screen locks or the tab is hidden. It silently does nothing on browsers without the API. Also set the tablet itself to never auto-lock and never sleep while charging (and turn on guided access or kiosk mode if you want it pinned). The wake lock is the first layer, the device setting is the backup.
+
 ## 3. Identity, clock in, clock out
 
 **Rule: no one is ever recorded without typing their own code.** No name pickers, no tap-to-select. The old "I am" picker is hidden and unreachable.
