@@ -21,17 +21,18 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 .station.locked button{display:none}
 .row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0e0f7}
 .row .name{width:80px;font-weight:bold}.row .bar{flex:1}.row .face{font-size:24px;width:34px;text-align:center}
-.note{font-size:13px;color:#7a6a90;margin-top:10px}
+.task.pending{background:#fff8dc;border-color:#ffd23f}.task button,.q button{border:0;border-radius:8px;padding:6px 10px;cursor:pointer;color:#fff;background:var(--purple)}.task img,.q img{width:44px;height:44px;object-fit:cover;border-radius:8px}.q{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0e0f7}.q .ok{background:#1faa59}.q .no{background:#d33}.q .sp{margin-left:auto;display:flex;gap:6px}.demo{background:#aaa!important;font-size:12px}.note{font-size:13px;color:#7a6a90;margin-top:10px}
 </style></head><body>
 <header><h1>🍬 Hubbalicious Crew Board</h1><p>Finish your tasks. Unlock better music. Collect smileys.</p></header>
 <main>
 <section class="card"><h2>✅ Today's Tasks</h2>
 <div class="who">I am: <select id="me"></select></div>
 <div id="tasks"></div>
-<div class="note">Tap a task to mark it done (demo data, nothing is saved yet).</div></section>
+<div class="note">Tap a task, snap a photo of the finished job. It goes to Scout for approval before it counts (demo data, nothing is saved).</div></section>
 <section class="card"><h2>🎵 Music Stations</h2>
 <div id="progress"></div><div class="bar"><i id="pbar"></i></div>
 <div id="stations"></div></section>
+<section class="card full"><h2>🔍 Scout's Approval Queue</h2><div id="queue"></div><div class="note">Scout (Kristen's agent) reviews each photo. Points and music unlocks only count after approval. Demo: Approve / Send back buttons stand in for Scout.</div></section>
 <section class="card full"><h2>🏆 Leaderboard</h2><div id="board"></div>
 <div class="note">😐 0-1 &nbsp; 🙂 2-3 &nbsp; 😄 4-5 &nbsp; 🤩 6+ tasks done</div></section>
 </main>
@@ -41,15 +42,24 @@ const tasks=[["Wipe down counters",1],["Restock cups & lids",1],["Refill candy b
 // demo starting counts for the rest of the crew
 const counts={Kristen:3,Ava:5,Jake:1,Mia:2,Noah:0};
 const stations=[["Hubbalicious Songs Loop","The default. Same songs, on repeat.",0],["Pop Hits","",2],["Throwback Jams","",4],["Chill Lo-fi","",6],["Your Pick (any station)","",8]];
-let done=new Set();let playing=0;
+let done=new Set();let pending={};let playing=0;let pickIdx=null;
+const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.setAttribute('capture','environment');
+fi.onchange=()=>{const f=fi.files[0];if(f&&pickIdx!=null){pending[pickIdx]=URL.createObjectURL(f);render()}fi.value=''};
+const DEMO='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="88" height="88"><rect width="88" height="88" fill="#ffd23f"/><text x="44" y="58" font-size="44" text-anchor="middle">📸</text></svg>');
 const me=document.getElementById("me");crew.forEach(c=>me.add(new Option(c,c)));
 const face=n=>n>=6?"🤩":n>=4?"😄":n>=2?"🙂":"😐";
 function score(){return [...done].reduce((s,i)=>s+tasks[i][1],0)}
 function render(){
  const t=document.getElementById("tasks");t.innerHTML="";
- tasks.forEach((k,i)=>{const d=document.createElement("div");d.className="task"+(done.has(i)?" done":"");
-  d.innerHTML=`<span>${done.has(i)?"✅":"⬜"}</span><span>${k[0]}</span><span class="pts">+${k[1]}</span>`;
-  d.onclick=()=>{done.has(i)?done.delete(i):done.add(i);render()};t.appendChild(d)});
+ tasks.forEach((k,i)=>{const d=document.createElement("div");const isP=i in pending;d.className="task"+(done.has(i)?" done":isP?" pending":"");
+  const status=done.has(i)?"✅ Approved":isP?"⏳ Waiting for Scout":"";
+  d.innerHTML=`<span>${done.has(i)?"✅":isP?"⏳":"⬜"}</span><span>${k[0]}<br><small>${status}</small></span>${isP?`<img src="${pending[i]}">`:""}<span class="pts">+${k[1]}</span>${(!done.has(i)&&!isP)?'<button class="demo">demo photo</button>':''}`;
+  if(!done.has(i)&&!isP){d.onclick=()=>{pickIdx=i;fi.click()};d.querySelector('.demo').onclick=e=>{e.stopPropagation();pending[i]=DEMO;render()}}
+  t.appendChild(d)});
+ const q=document.getElementById("queue");const keys=Object.keys(pending).filter(i=>!done.has(+i));
+ q.innerHTML=keys.length?"":'<div class="note">Nothing waiting. Scout is bored.</div>';
+ keys.forEach(i=>{const d=document.createElement("div");d.className="q";d.innerHTML=`<img src="${pending[i]}"><div><b>${me.value}</b>: ${tasks[i][0]}<br><small>Scout: does this photo show the job done?</small></div><div class="sp"><button class="ok">Approve</button><button class="no">Send back</button></div>`;
+  d.querySelector('.ok').onclick=()=>{done.add(+i);render()};d.querySelector('.no').onclick=()=>{delete pending[i];render()};q.appendChild(d)});
  const s=score();const next=stations.find(x=>x[2]>s);
  document.getElementById("progress").textContent=`${s} points`+(next?` - ${next[2]-s} more to unlock "${next[0]}"`:" - everything unlocked!");
  document.getElementById("pbar").style.width=Math.min(100,s/8*100)+"%";
@@ -63,5 +73,5 @@ function render(){
  const max=Math.max(8,...rows.map(r=>r[1]));
  document.getElementById("board").innerHTML=rows.map((r,i)=>`<div class="row"><span>${i==0?"👑":i+1}</span><span class="name">${r[0]}</span><div class="bar"><i style="width:${r[1]/max*100}%"></i></div><span>${r[1]}</span><span class="face">${face(r[1])}</span></div>`).join("");
 }
-me.onchange=()=>{done.clear();playing=0;render()};render();
+me.onchange=()=>{done.clear();pending={};playing=0;render()};render();
 </script></body></html>
