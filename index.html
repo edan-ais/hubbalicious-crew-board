@@ -26,31 +26,38 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <header><h1>🍬 Hubbalicious Crew Board</h1><p>Finish your tasks. Unlock better music. Earn your spot on the board.</p></header>
 <div id="phone" style="display:none;max-width:520px;margin:0 auto;padding:14px"><div class="card"><h2>📱 My Phone</h2><div id="phbody"></div></div></div>
 <div class="bar2"><select id="me2" style="display:none"></select><button id="clockbtn" class="cin">Clock in</button><span class="st" id="clockst" style="flex:1;text-align:center">Clocked out</span><button id="clockout" class="out">Clock out</button></div>
-<div class="tabs"><button data-t="tasks" class="on">Tasks &amp; Music</button><button data-t="open">Opening list</button><button data-t="close">Closing list</button><button data-t="hb">Handbook</button></div>
+<div class="tabs"><button data-t="dash" class="on">Dashboard</button><button data-t="tasks">Tasks</button><button data-t="music">Music</button><button data-t="crew">Crew</button><button data-t="open">Checklist</button><button data-t="hb">Handbook</button></div>
 <div class="ov" id="ov"><div class="modal"><h2>Hi! Here's today</h2><div id="ovbody"></div><label style="display:block;margin:12px 0"><input type="checkbox" id="ack"> I read this and I'll get it done</label><button id="start" disabled>Start my shift</button> <button id="cancel" style="background:#999">Cancel</button></div></div>
 <div class="ov" id="hov"><div class="modal hm"><h2 id="htitle"></h2><div id="hbody"></div><p><button class="aud" id="haud">🔊 Play audio</button> <button id="hclose" style="background:#999">Close</button></p><div class="note">Demo: audio reads the steps aloud with the browser voice. Real recorded audio comes later. Kristen would write or record these.</div></div></div>
-<main id="tab-tasks">
+<main id="tab-dash">
 <section class="card full" id="whocard"><h2>👥 Who's working today</h2><div id="who"></div><div class="note">Placeholder schedule. Real scheduling comes later.</div></section>
 <section class="card full" id="scoutcard"><div class="chead"><span class="av">🤖</span><div><b style="font-size:20px">Scout</b><br><small>● online · here to help</small></div></div>
 <div class="bub sc" id="scgreet" style="max-width:100%;margin-bottom:8px;font-size:17px"><b>Scout's here to help!</b> Ask anything about the store, share what you'd like to see improved, or ask me questions.</div><div id="chat"></div>
 <div id="chips"><button class="chip" data-m="I have an idea for the store: ">💡 Share an idea</button><button class="chip" data-m="How do I ">❓ Ask a question</button><button class="chip" data-m="who's working today?">👥 Who's working?</button><button class="chip" data-m="what are my tasks?">✅ My tasks</button></div>
 <div class="cin2"><textarea id="stxt" placeholder="Ask about the store, or tell Scout what you'd like improved..."></textarea><button id="ssend">Send</button></div>
 <div id="ideas"></div></section>
+<section class="card full" id="npcard"><h2>🎵 Now playing</h2><div id="np" style="font-size:20px;font-weight:bold"></div><div class="note" id="npsub"></div><button class="pb" id="npgo" style="margin-top:6px">Open Music</button></section>
+</main>
+<main id="tab-tasks" style="display:none">
 <section class="card"><h2>✅ Today's Tasks</h2>
 <select id="me" style="display:none"></select>
 <div id="tasks"></div>
 <label class="note" style="display:block"><input type="checkbox" id="auto" checked> Demo: Scout reviews each photo in about 1 minute (turns green or red by itself). Uncheck to use the manual queue only.</label><div class="note"><a href="#" id="rst">Reset demo data</a></div>
 <div class="note">Tap a task and enter your code so we know who did it. The photo goes to Scout for approval before it counts. If Scout sends it back, the note shows here.</div></section>
-<section class="card"><h2>🎵 Music Stations</h2>
+<section class="card full"><h2>🔍 Scout's Approval Queue</h2><div id="queue"></div><div class="note">Scout (Kristen's agent) reviews each photo. Points and music unlocks only count after approval. Demo: Approve / Send back buttons stand in for Scout.</div></section>
+</main>
+<main id="tab-music" style="display:none">
+<section class="card full"><h2>🎵 Music Stations</h2>
 <div id="progress"></div><div class="bar"><i id="pbar"></i></div>
 <div id="stations"></div></section>
-<section class="card full"><h2>🔍 Scout's Approval Queue</h2><div id="queue"></div><div class="note">Scout (Kristen's agent) reviews each photo. Points and music unlocks only count after approval. Demo: Approve / Send back buttons stand in for Scout.</div></section>
+</main>
+<main id="tab-crew" style="display:none">
 <section class="card full"><h2>🏆 Crew Board</h2><div id="kidboard"></div></section>
 <section class="card full" id="mgrcard" style="display:none"><h2>📊 Manager view: shift scores (Kristen only)</h2>
 <div id="board"></div>
 <div class="note"><b>How the score works:</b> each shift gets a score where <b>1.00 = met expectations</b>. Expected output is about 1 task per person per hour, softened when the store is busy (when the store is busy the target drops, so customers come first), and scaled to staffing: two people on shift are held to a two-person output, one person to a one-person output. A shift's score blends how the whole crew did against its target with how you did against yours. Your leaderboard number is the <b>median</b> of your shift scores, so one shift a week competes fairly with every shift, and one weird shift can't swing it. Improving on your own last week earns 📈. Credit goes to whoever's code was entered, approved tasks only.</div></section>
 </main>
-<main id="tab-open" style="display:none"><section class="card full"><h2>🌅 Opening List</h2><div id="openl"></div></section>
+<main id="tab-open" style="display:none"><section class="card full"><h2 id="cltitle"></h2><div class="note" id="clprog" style="margin:0 0 8px"></div><div id="openl"></div><div id="clsign"></div></section>
 <section class="card full"><h2>📝 How it was left</h2><div class="note" style="margin:0 0 8px">Leave notes for the next shift: what's low, what broke, what's done. Type, or tap the mic and just talk.</div>
 <div class="nrow"><textarea id="lnote" placeholder="e.g. Shake machine is cleaned but the vanilla is almost out..."></textarea><button class="mic" id="mic" title="Talk">🎤</button></div>
 <div id="micst" class="note"></div><button id="lsave" style="margin-top:8px;border:0;border-radius:10px;padding:8px 14px;color:#fff;background:var(--pink);cursor:pointer">Save note</button><div id="lnotes" style="margin-top:10px"></div></section></main>
@@ -58,7 +65,7 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <input id="hbq" placeholder="Search the handbook (try: breaks, uniform, cash)" style="width:100%;font-size:17px;padding:10px;border-radius:10px;border:2px solid #e0d0f0">
 <div class="note" id="hbcount"></div><div id="hblist"></div>
 </section></main>
-<main id="tab-close" style="display:none"><section class="card full"><h2>🌙 Closing List</h2><div id="closel"></div></section></main>
+
 <script src="handbook-data.js"></script>
 <script>
 const crew=["Kristen","Haley","Ava","Jake","Mia","Noah"];
@@ -91,7 +98,7 @@ const DEMO='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www
 let clockedIn=false,acked=false,clockAt=null;
 const openL=["Turn on lights and TVs","Count the register drawer","Fire up shake machine & soda station","Fill candy bins","Check dates on fresh items","Unlock front door at open"];
 const closeL=["Wipe all counters","Clean shake machine","Empty trash","Sweep & mop","Restock cups and lids","Lock up & set alarm"];
-const lists={open:new Set(),close:new Set()};
+const lists={open:new Set(),close:new Set()};let phase="open";let signoffs=[];
 
 const prevBy={open:"Jake",close:"Mia"}; // demo: who did the other list last shift
 const grades=[];let mgrNotes=[];
@@ -123,17 +130,31 @@ function mgrPanel(){
  w.querySelectorAll(".hld").forEach(b=>b.onclick=()=>{grades[+b.dataset.i].status="held";renderLists()});
  w.querySelector("button").onclick=()=>{const v=w.querySelector("textarea").value;if(v){mgrNotes.push(v);renderLists()}};
  return w}
-function renderLists(){[["open",openL,"openl"],["close",closeL,"closel"]].forEach(([k,L,id])=>{const el=document.getElementById(id);el.innerHTML="";L.forEach((t,i)=>{const d=document.createElement("div");d.className="ck"+(lists[k].has(i)?" on":"");d.innerHTML=`<span>${lists[k].has(i)?"✅":"⬜"}</span><span>${t}${listWho[k][i]?`<br><small>Done by: ${listWho[k][i].join(" + ")}${listWho[k][i].length>1?" (shared)":""}</small>`:""}</span>`;d.onclick=()=>{if(!clockedIn){alert("Clock in first.");return}if(lists[k].has(i)){lists[k].delete(i);delete listWho[k][i]}else{const n=getDoers(true);if(!n)return;lists[k].add(i);listWho[k][i]=n}renderLists()};d.appendChild(helpBtn(t));el.appendChild(d)});el.appendChild(gradePanel(k,L));el.appendChild(mgrPanel())})}
+function renderLists(){const k=phase,L=k==="open"?openL:closeL;const el=document.getElementById("openl");el.innerHTML="";
+ document.getElementById("cltitle").textContent=k==="open"?"🌅 Opening checklist":"🌙 Closing checklist";
+ document.getElementById("clprog").textContent=lists[k].size+" of "+L.length+" confirmed. Every item needs the code of whoever did it (or both of you) before it checks off. When all are done, sign off and the list flips to the "+(k==="open"?"closing":"opening")+" list.";
+ L.forEach((t,i)=>{const d=document.createElement("div");d.className="ck"+(lists[k].has(i)?" on":"");d.innerHTML=`<span>${lists[k].has(i)?"✅":"⬜"}</span><span>${t}${listWho[k][i]?`<br><small>Done by: ${listWho[k][i].join(" + ")}${listWho[k][i].length>1?" (both)":""}</small>`:""}</span>`;
+  d.onclick=()=>{if(!clockedIn){alert("Clock in first.");return}
+   if(lists[k].has(i)){const n=getDoers(false);if(!n)return;if(n[0]!=="Kristen"&&!listWho[k][i].includes(n[0])){alert("Only the person who confirmed it, or Kristen, can undo it.");return}lists[k].delete(i);delete listWho[k][i]}
+   else{const n=getDoers(true);if(!n)return;lists[k].add(i);listWho[k][i]=n}
+   saveState();renderLists()};
+  d.appendChild(helpBtn(t));el.appendChild(d)});
+ const sg=document.getElementById("clsign");const all=lists[k].size===L.length;
+ sg.innerHTML=`<button id="signbtn" class="pb" ${all?"":"disabled"} style="margin-top:6px">${all?"✅ Sign off the "+(k==="open"?"opening":"closing")+" list":"Sign off (finish every item first)"}</button>`+(signoffs.length?`<div class="note">Last sign-off: ${signoffs[0].list} list signed off by <b>${signoffs[0].by}</b> at ${signoffs[0].at}.</div>`:"");
+ document.getElementById("signbtn").onclick=()=>{if(!clockedIn){alert("Clock in first.");return}if(lists[k].size<L.length)return;const n=getDoers(false);if(!n)return;
+  signoffs.unshift({list:k==="open"?"Opening":"Closing",by:n[0],at:new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})});prevBy[k]=n[0];
+  lists[k].clear();listWho[k]={};phase=k==="open"?"close":"open";saveState();renderLists()};
+ el.parentNode.querySelectorAll(".gp").forEach(x=>x.remove());el.parentNode.appendChild(gradePanel(k,L));el.parentNode.appendChild(mgrPanel())}
 function renderClock(){document.getElementById("clockst").textContent=clockedIn?"🟢 "+me.value+" clocked in since "+clockAt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):"⚪ Clocked out";document.getElementById("clockbtn").disabled=clockedIn;document.getElementById("clockout").disabled=!clockedIn}
 const clockToggle=()=>{
  if(!clockedIn){const cc=prompt("Clock in: enter your personal code (demo: Kristen 1111, Ava 2222, Jake 3333, Mia 4444, Noah 5555, Haley 6666)");if(cc===null)return;const who0=byCode(cc);if(!who0){alert("Code not recognized.");return}me.value=who0;const ob=document.getElementById("ovbody");ob.innerHTML=`<p><b>${tasks.filter((t,i)=>!removed.has(i)).length} tasks</b> on the board today:</p><ul>${tasks.filter((t,i)=>!removed.has(i)).map(t=>`<li>${t[0]}</li>`).join("")}</ul><p>Opening list: ${openL.length} items. Closing list: ${closeL.length} items.</p><p>📣 Manager note: Harvest Festival leftovers are on sale, push the older candy.</p>`;document.getElementById("ack").checked=false;document.getElementById("start").disabled=true;document.getElementById("ov").classList.add("show")}
- else{const left=closeL.length-lists.close.size;if(left>0&&!confirm(left+" closing items not done. Clock out anyway?"))return;delete clocked[me.value];clockedIn=false;renderClock();renderLists();render()}};
+ else{const left=phase==="close"?closeL.length-lists.close.size:0;if(left>0&&!confirm(left+" closing items not done. Clock out anyway?"))return;delete clocked[me.value];clockedIn=false;renderClock();renderLists();render()}};
 document.getElementById("clockbtn").onclick=()=>{if(!clockedIn)clockToggle()};
 document.getElementById("clockout").onclick=()=>{if(clockedIn)clockToggle()};
 document.getElementById("ack").onchange=e=>document.getElementById("start").disabled=!e.target.checked;
 document.getElementById("cancel").onclick=()=>document.getElementById("ov").classList.remove("show");
-document.getElementById("start").onclick=()=>{clockedIn=true;clockAt=new Date();clocked[me.value]=clockAt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});document.getElementById("ov").classList.remove("show");lists.open.clear();lists.close.clear();listWho.open={};listWho.close={};renderClock();renderLists();render()};
-document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x==b));["tasks","open","close","hb"].forEach(t=>document.getElementById("tab-"+t).style.display=t==b.dataset.t?"":"none")});
+document.getElementById("start").onclick=()=>{clockedIn=true;clockAt=new Date();clocked[me.value]=clockAt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});document.getElementById("ov").classList.remove("show");renderClock();renderLists();render()};
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x==b));["dash","tasks","music","crew","open","hb"].forEach(t=>document.getElementById("tab-"+t).style.display=t==b.dataset.t?"":"none")});
 
 const lastWeek={Kristen:3,Ava:6,Jake:0,Mia:2,Noah:0};const lastNeeds={open:3,close:4};
 const codes={Haley:"6666",Kristen:"1111",Ava:"2222",Jake:"3333",Mia:"4444",Noah:"5555"};
@@ -163,8 +184,8 @@ let awaiting={};let ideas=[];let clocked={};
 const SCHEDULE=[["Kristen","11am-4pm"],["Haley","11am-2pm"],["Mia","1pm-4pm"],["Jake","1pm-4pm"]];
 const KEY="hcb-v1";
 let syncing=false;
-function saveState(){if(syncing)return;try{localStorage.setItem(KEY,JSON.stringify({clocked,ideas,tasks,team:[...team],removed:[...removed],awaiting,pending,who,rejected,baseline,done:[...done]}));}catch(e){alert("Storage full, clear demo data.")}}
-function loadState(){try{const o=JSON.parse(localStorage.getItem(KEY)||"null");if(!o)return;if(o.tasks){tasks.length=0;o.tasks.forEach(t=>tasks.push(t));team.clear();(o.team||[]).forEach(x=>team.add(x));removed.clear();(o.removed||[]).forEach(x=>removed.add(x))}clocked=o.clocked||{};ideas=o.ideas||[];awaiting=o.awaiting||{};pending=o.pending||{};who=o.who||{};rejected=o.rejected||{};baseline=o.baseline||baseline;done=new Set(o.done||[])}catch(e){}}
+function saveState(){if(syncing)return;try{localStorage.setItem(KEY,JSON.stringify({phase,signoffs,prevBy,lo:[...lists.open],lc:[...lists.close],lw:listWho,clocked,ideas,tasks,team:[...team],removed:[...removed],awaiting,pending,who,rejected,baseline,done:[...done]}));}catch(e){alert("Storage full, clear demo data.")}}
+function loadState(){try{const o=JSON.parse(localStorage.getItem(KEY)||"null");if(!o)return;if(o.tasks){tasks.length=0;o.tasks.forEach(t=>tasks.push(t));team.clear();(o.team||[]).forEach(x=>team.add(x));removed.clear();(o.removed||[]).forEach(x=>removed.add(x))}clocked=o.clocked||{};if(o.phase){phase=o.phase;signoffs=o.signoffs||[];Object.assign(prevBy,o.prevBy||{});lists.open=new Set(o.lo||[]);lists.close=new Set(o.lc||[]);listWho.open=(o.lw||{}).open||{};listWho.close=(o.lw||{}).close||{}}ideas=o.ideas||[];awaiting=o.awaiting||{};pending=o.pending||{};who=o.who||{};rejected=o.rejected||{};baseline=o.baseline||baseline;done=new Set(o.done||[])}catch(e){}}
 window.addEventListener("storage",e=>{if(e.key===KEY){syncing=true;loadState();render();renderPhone();syncing=false}});
 function shrink(file,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const m=480,k=Math.min(1,m/Math.max(im.width,im.height));const c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.7))};im.src=r.result};r.readAsDataURL(file)}
 const PHONE=/phone/.test(location.hash+location.search);let phoneUser=null;
@@ -246,8 +267,10 @@ const listWho={open:{},close:{}};
 function submit(i){const names=getDoers(team.has(i));if(!names)return;who[i]=names;awaiting[i]=names;delete rejected[i];saveState();render()}
 const me=document.getElementById("me");const me2=document.getElementById("me2");crew.forEach(c=>{me.add(new Option(c,c));me2.add(new Option(c,c))});me2.onchange=()=>{me.value=me2.value;me.onchange()};
 function score(){return [...done].reduce((s,i)=>s+tasks[i][1],0)}
+function renderNP(){const e=document.getElementById('np');if(!e)return;e.textContent=stations[playing][0];document.getElementById('npsub').textContent=score()+' points unlocked so far. Better stations unlock as tasks get approved.'}
+document.getElementById('npgo').onclick=()=>document.querySelector('.tabs [data-t=music]').click();
 function renderWho(){const el=document.getElementById('who');el.innerHTML=SCHEDULE.map(x=>{const c=clocked[x[0]];return `<div class="wr"><span class="nm">${x[0]}</span><span class="tm">${x[1]}</span><span class="stt">${c?'🟢 Clocked in at '+c:'⚪ Not in yet'}</span></div>`}).join('')+(Object.keys(clocked).filter(n=>!SCHEDULE.some(x=>x[0]===n)).map(n=>`<div class="wr"><span class="nm">${n}</span><span class="tm">not on schedule</span><span class="stt">🟢 Clocked in at ${clocked[n]}</span></div>`).join(''))}
-function render(){saveState();try{renderWho()}catch(e){}try{renderIdeas()}catch(e){}
+function render(){saveState();try{renderWho();renderNP()}catch(e){}try{renderIdeas()}catch(e){}
  const t=document.getElementById("tasks");t.innerHTML="";
  tasks.forEach((k,i)=>{if(removed.has(i))return;const d=document.createElement("div");const isP=i in pending;d.className="task"+(done.has(i)?" done":isP?" pending":(i in awaiting)?" pending":(i in rejected)?" rejected":"");
   const status=(i in awaiting)?"📱 Waiting for "+awaiting[i].join(" + ")+"'s photo from their phone":done.has(i)?"✅ Approved":isP?"⏳ Pending - waiting approval":(i in rejected)?"❌ Scout sent it back - redo and upload a new photo":"";
@@ -262,7 +285,7 @@ function render(){saveState();try{renderWho()}catch(e){}try{renderIdeas()}catch(
  const s=score();const next=stations.find(x=>x[2]>s);
  document.getElementById("progress").textContent=`${s} points`+(next?` - ${next[2]-s} more to unlock "${next[0]}"`:" - everything unlocked!");
  document.getElementById("pbar").style.width=Math.min(100,s/8*100)+"%";
- if(stations[playing][2]>s)playing=0;
+ if(stations[playing][2]>s)playing=0;renderNP();
  const st=document.getElementById("stations");st.innerHTML="";
  stations.forEach((x,i)=>{const locked=x[2]>s;const d=document.createElement("div");
   d.className="station"+(locked?" locked":"")+(i==playing?" playing":"");
