@@ -31,10 +31,10 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <div class="ov" id="hov"><div class="modal hm"><h2 id="htitle"></h2><div id="hbody"></div><p><button class="aud" id="haud">🔊 Play audio</button> <button id="hclose" style="background:#999">Close</button></p><div class="note">Demo: audio reads the steps aloud with the browser voice. Real recorded audio comes later. Kristen would write or record these.</div></div></div>
 <main id="tab-tasks">
 <section class="card full" id="whocard"><h2>👥 Who's working today</h2><div id="who"></div><div class="note">Placeholder schedule. Real scheduling comes later.</div></section>
-<section class="card full" id="scoutcard"><div class="chead"><span class="av">🤖</span><div><b style="font-size:20px">Scout</b><br><small>● online · ask me anything or tell me what you'd like to see in the store</small></div></div>
-<div id="chat"></div>
-<div id="chips"><button class="chip" data-m="I have an idea for the store: ">💡 Share an idea</button><button class="chip" data-m="who's working today?">👥 Who's working?</button><button class="chip" data-m="what are my tasks?">✅ My tasks</button></div>
-<div class="cin2"><textarea id="stxt" placeholder="Message Scout..."></textarea><button id="ssend">Send</button></div>
+<section class="card full" id="scoutcard"><div class="chead"><span class="av">🤖</span><div><b style="font-size:20px">Scout</b><br><small>● online · here to help</small></div></div>
+<div class="bub sc" id="scgreet" style="max-width:100%;margin-bottom:8px;font-size:17px"><b>Scout's here to help!</b> Ask anything about the store, share what you'd like to see improved, or ask me questions.</div><div id="chat"></div>
+<div id="chips"><button class="chip" data-m="I have an idea for the store: ">💡 Share an idea</button><button class="chip" data-m="How do I ">❓ Ask a question</button><button class="chip" data-m="who's working today?">👥 Who's working?</button><button class="chip" data-m="what are my tasks?">✅ My tasks</button></div>
+<div class="cin2"><textarea id="stxt" placeholder="Ask about the store, or tell Scout what you'd like improved..."></textarea><button id="ssend">Send</button></div>
 <div id="ideas"></div></section>
 <section class="card"><h2>✅ Today's Tasks</h2>
 <select id="me" style="display:none"></select>
@@ -185,7 +185,7 @@ if(!PHONE)setInterval(()=>{const on=document.getElementById("auto").checked;let 
   if(on&&Date.now()-since[i]>=60000){delete since[i];if(Math.random()<.7){done.add(+i)}else{rejected[i]=notesBank[Math.floor(Math.random()*notesBank.length)];delete pending[i]}ch=true}});
  if(ch)render();else countdown()},1000);
 
-const chatLog=[["sc","Scout","Hi! I'm Scout. Clock in, then tell me what you'd like to see happen in the store. Kristen reads every idea."]];
+const chatLog=[["sc","Scout","Hi, I'm Scout. Clock in so I know who I'm talking to, then ask me anything about the store or tell me what you'd like to see improved. Kristen reads every idea and question I can't answer."]];
 function drawChat(){const c=document.getElementById("chat");c.innerHTML=chatLog.map(m=>`<div class="bub ${m[0]}"><small>${m[1]}</small>${m[2]}</div>`).join("");c.scrollTop=c.scrollHeight}
 function scoutSay(who,name,m){chatLog.push([who==="Scout"?"sc":"me",name,m]);drawChat()}
 function findTask(q){q=q.toLowerCase().replace(/[^a-z0-9 ]/g,"").trim();return tasks.findIndex((t,i)=>!removed.has(i)&&(t[0].toLowerCase().includes(q)||q.includes(t[0].toLowerCase().replace(/[^a-z0-9 ]/g,""))))}
@@ -196,7 +196,7 @@ function scoutDo(msg){let m;
  if(m=msg.match(/^\s*make\s+(.+?)\s+worth\s+(\d+)\s*(?:points?|pts?)?\.?$/i)){const i=findTask(m[1]);if(i<0)return`I couldn't find a task like "${m[1]}".`;tasks[i][1]=+m[2];return`🔢 "${tasks[i][0]}" is now worth ${m[2]}.`}
  return"I can add a task, remove one, make one a team task, or change its points. Try: add a task: wipe the windows, 2 points.";}
 function renderIdeas(){const el=document.getElementById("ideas");if(!clockedIn||me.value!=="Kristen"){el.innerHTML="";return}
- el.innerHTML=ideas.length?"<b>💡 Ideas from the crew</b>"+ideas.map((x,i)=>`<div class="gline"><b>${x.by}:</b> ${x.t.replace(/</g,"&lt;")} <button class="pb idb" data-i="${i}" style="padding:3px 8px;font-size:12px">Make it a task</button> <button class="pb idd" data-i="${i}" style="padding:3px 8px;font-size:12px;background:#999">Dismiss</button></div>`).join(""):'<div class="note">No crew ideas yet.</div>';
+ el.innerHTML=ideas.length?"<b>💡 Ideas and questions from the crew</b>"+ideas.map((x,i)=>`<div class="gline"><b>${x.by}${x.q?" (question)":""}:</b> ${x.t.replace(/</g,"&lt;")} ${x.q?"":`<button class="pb idb" data-i="${i}" style="padding:3px 8px;font-size:12px">Make it a task</button>`} <button class="pb idd" data-i="${i}" style="padding:3px 8px;font-size:12px;background:#999">Dismiss</button></div>`).join(""):'<div class="note">No crew ideas yet.</div>';
  el.querySelectorAll(".idb").forEach(b=>b.onclick=()=>{document.getElementById("stxt").value="add a task: "+ideas[+b.dataset.i].t;document.getElementById("stxt").focus()});
  el.querySelectorAll(".idd").forEach(b=>b.onclick=()=>{ideas.splice(+b.dataset.i,1);saveState();renderIdeas()})}
 document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const t=document.getElementById("stxt");t.value=b.dataset.m;t.focus();if(!/:\s$/.test(b.dataset.m))document.getElementById("ssend").click()});
@@ -208,6 +208,10 @@ document.getElementById("ssend").onclick=()=>{const ta=document.getElementById("
  if(me.value==="Kristen"){const r=scoutDo(v);scoutSay("Scout","Scout",r.replace(/^[^ ]+ /,m=>m))}
  else if(/who.*(working|on shift|here)|schedule/i.test(v)){scoutSay("Scout","Scout","Today: "+whoText()+".")}
  else if(/\b(tasks?|to ?do)\b.*\?|what('s| are| is).*(task|to ?do)/i.test(v)){const n=tasks.filter((t,i)=>!removed.has(i)&&!done.has(i)).length;scoutSay("Scout","Scout","There are "+n+" tasks still open on the board. Tap one, enter your code, then snap your photo on your phone.")}
+ else if(/\?\s*$/.test(v)&&!/^(can|could|what if|why don\'?t) we\b/i.test(v)){const words=v.toLowerCase().replace(/[^a-z0-9 ]/g," ").split(" ").filter(w=>w.length>3&&!["what","when","where","does","with","about","this","that","have","from","your","there","should","would","could","they","them","into","store"].includes(w));
+  const sc=h=>words.reduce((t,w)=>t+(h[0].toLowerCase().includes(w)?3:0)+(h[1].toLowerCase().includes(w)?1:0),0);const hit=HANDBOOK.map(h=>[sc(h),h]).sort((a,b)=>b[0]-a[0]).filter(x=>x[0]>0).map(x=>x[1])[0];
+  if(hit){scoutSay("Scout","Scout","Good question. Check the handbook section <b>"+hit[0]+"</b> (Handbook tab). If that doesn't answer it, ask me again and I'll send it to Kristen.")}
+  else{ideas.unshift({by:me.value,t:v,q:1});scoutSay("Scout","Scout","I don't know that one yet, "+me.value+". I sent your question to Kristen so we can get you a real answer. ❓");saveState()}}
  else{ideas.unshift({by:me.value,t:v});scoutSay("Scout","Scout","Love it, "+me.value+"! I passed your idea to Kristen. 💡");saveState()}
  ta.value="";render()};
 drawChat();
