@@ -21,7 +21,7 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 .station.locked button{display:none}
 .row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0e0f7}
 .row .name{width:80px;font-weight:bold}.row .bar{flex:1}.row .face{font-size:24px;width:34px;text-align:center}
-.task.pending{background:#fff8dc;border-color:#ffd23f}.task button,.q button{border:0;border-radius:8px;padding:6px 10px;cursor:pointer;color:#fff;background:var(--purple)}.task img,.q img{width:44px;height:44px;object-fit:cover;border-radius:8px}.q{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0e0f7}.q .ok{background:#1faa59}.q .no{background:#d33}.q .sp{margin-left:auto;display:flex;gap:6px}.demo{background:#aaa!important;font-size:12px}.base{display:flex;align-items:center;gap:6px;font-size:12px;color:#7a6a90}.base button{background:#ff3d9a!important;padding:3px 8px!important;font-size:12px}.cmp{display:flex;gap:6px}.cmp figure{margin:0;text-align:center;font-size:11px}.task.rejected{background:#ffecec;border-color:#e66}.scoutnote{background:#fff;border-left:4px solid #d33;padding:4px 8px;margin-top:4px;font-size:13px;border-radius:4px}.bar2{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#fff;padding:10px 18px;border-bottom:2px solid #f0e0f7}.bar2 .st{font-weight:bold}.bar2 button,.tabs button,.modal button{border:0;border-radius:10px;padding:8px 14px;font-size:15px;cursor:pointer;color:#fff;background:var(--purple)}.bar2 .out{background:#d33}.tabs{display:flex;gap:6px;padding:10px 18px 0;max-width:1100px;margin:auto}.tabs button{background:#e6d9ff;color:var(--ink)}.tabs button.on{background:var(--pink);color:#fff}.ck{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;border:2px solid #f0e0f7;margin-bottom:8px;cursor:pointer}.ck.on{background:#e9ffe9;border-color:#8be08b}.ov{position:fixed;inset:0;background:#2b1745cc;display:none;align-items:center;justify-content:center;padding:16px;z-index:9}.ov.show{display:flex}.modal{background:#fff;border-radius:16px;padding:20px;max-width:460px;width:100%}.modal button:disabled{background:#bbb}.note{font-size:13px;color:#7a6a90;margin-top:10px}
+.task.pending{background:#fff8dc;border-color:#ffd23f}.task button,.q button{border:0;border-radius:8px;padding:6px 10px;cursor:pointer;color:#fff;background:var(--purple)}.task img,.q img{width:44px;height:44px;object-fit:cover;border-radius:8px}.q{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0e0f7}.q .ok{background:#1faa59}.q .no{background:#d33}.q .sp{margin-left:auto;display:flex;gap:6px}.demo{background:#aaa!important;font-size:12px}.base{display:flex;align-items:center;gap:6px;font-size:12px;color:#7a6a90}.base button{background:#ff3d9a!important;padding:3px 8px!important;font-size:12px}.cmp{display:flex;gap:6px}.cmp figure{margin:0;text-align:center;font-size:11px}.task.rejected{background:#ffecec;border-color:#e66}.scoutnote{background:#fff;border-left:4px solid #d33;padding:4px 8px;margin-top:4px;font-size:13px;border-radius:4px}.bar2{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#fff;padding:10px 18px;border-bottom:2px solid #f0e0f7}.bar2 .st{font-weight:bold}.bar2 button,.tabs button,.modal button{border:0;border-radius:10px;padding:8px 14px;font-size:15px;cursor:pointer;color:#fff;background:var(--purple)}.bar2 .out{background:#d33}.tabs{display:flex;gap:6px;padding:10px 18px 0;max-width:1100px;margin:auto}.tabs button{background:#e6d9ff;color:var(--ink)}.tabs button.on{background:var(--pink);color:#fff}.ck{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;border:2px solid #f0e0f7;margin-bottom:8px;cursor:pointer}.ck.on{background:#e9ffe9;border-color:#8be08b}.ov{position:fixed;inset:0;background:#2b1745cc;display:none;align-items:center;justify-content:center;padding:16px;z-index:9}.ov.show{display:flex}.modal{background:#fff;border-radius:16px;padding:20px;max-width:460px;width:100%}.modal button:disabled{background:#bbb}.tag{font-size:11px;background:#e6d9ff;border-radius:6px;padding:1px 6px;margin-left:4px}.note{font-size:13px;color:#7a6a90;margin-top:10px}
 </style></head><body>
 <header><h1>🍬 Hubbalicious Crew Board</h1><p>Finish your tasks. Unlock better music. Collect smileys.</p></header>
 <div class="bar2"><span>I am: <select id="me2"></select></span><span class="st" id="clockst">Clocked out</span><button id="clockbtn">Clock in</button></div>
@@ -31,13 +31,13 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <section class="card"><h2>✅ Today's Tasks</h2>
 <div class="who">I am: <select id="me"></select></div>
 <div id="tasks"></div>
-<div class="note">Tap a task and upload a photo of the finished job. It goes to Scout for approval before it counts. If Scout sends it back, Scout's note shows here so you can fix it and re-upload (demo data, nothing is saved).</div></section>
+<div class="note">Tap a task, upload a photo of the finished job. enter your code so we know who did it (team tasks can credit both people). It goes to Scout for approval before it counts. If Scout sends it back, Scout's note shows here so you can fix it and re-upload (demo data, nothing is saved).</div></section>
 <section class="card"><h2>🎵 Music Stations</h2>
 <div id="progress"></div><div class="bar"><i id="pbar"></i></div>
 <div id="stations"></div></section>
 <section class="card full"><h2>🔍 Scout's Approval Queue</h2><div id="queue"></div><div class="note">Scout (Kristen's agent) reviews each photo. Points and music unlocks only count after approval. Demo: Approve / Send back buttons stand in for Scout.</div></section>
 <section class="card full"><h2>🏆 Leaderboard</h2><div id="board"></div>
-<div class="note">😐 0-1 &nbsp; 🙂 2-3 &nbsp; 😄 4-5 &nbsp; 🤩 6+ tasks done</div></section>
+<div class="note">Credit goes to whoever's code was entered, approved tasks only. Both-of-us tasks credit both.<br>😐 0-1 &nbsp; 🙂 2-3 &nbsp; 😄 4-5 &nbsp; 🤩 6+ tasks done</div></section>
 </main>
 <main id="tab-open" style="display:none"><section class="card full"><h2>🌅 Opening List</h2><div id="openl"></div></section></main>
 <main id="tab-close" style="display:none"><section class="card full"><h2>🌙 Closing List</h2><div id="closel"></div></section></main>
@@ -53,7 +53,7 @@ const bi=document.createElement('input');bi.type='file';bi.accept='image/*';bi.s
 bi.onchange=()=>{const f=bi.files[0];if(f&&baseIdx!=null){baseline[baseIdx]=URL.createObjectURL(f);render()}bi.value=''};
 let rejected={};let done=new Set();let pending={};let playing=0;let pickIdx=null;
 const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.setAttribute('capture','environment');
-fi.onchange=()=>{const f=fi.files[0];if(f&&pickIdx!=null){pending[pickIdx]=URL.createObjectURL(f);delete rejected[pickIdx];render()}fi.value=''};
+fi.onchange=()=>{const f=fi.files[0];if(f&&pickIdx!=null){submit(pickIdx,URL.createObjectURL(f))}fi.value=''};
 const DEMO='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="88" height="88"><rect width="88" height="88" fill="#ffd23f"/><text x="44" y="58" font-size="44" text-anchor="middle">📸</text></svg>');
 
 let clockedIn=false,acked=false,clockAt=null;
@@ -69,6 +69,17 @@ document.getElementById("ack").onchange=e=>document.getElementById("start").disa
 document.getElementById("cancel").onclick=()=>document.getElementById("ov").classList.remove("show");
 document.getElementById("start").onclick=()=>{clockedIn=true;clockAt=new Date();document.getElementById("ov").classList.remove("show");renderClock()};
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x==b));["tasks","open","close"].forEach(t=>document.getElementById("tab-"+t).style.display=t==b.dataset.t?"":"none")});
+
+const codes={Kristen:"1111",Ava:"2222",Jake:"3333",Mia:"4444",Noah:"5555"};
+const team=new Set([2,3,7]);let who={};
+const byCode=c=>Object.keys(codes).find(n=>codes[n]===(c||"").trim());
+function submit(i,url){
+ const c=prompt("Enter your personal code (demo codes: Kristen 1111, Ava 2222, Jake 3333, Mia 4444, Noah 5555)");if(c===null)return;
+ const a=byCode(c);if(!a){alert("Code not recognized. Try again.");return}
+ let names=[a];
+ if(team.has(i)&&confirm("Team task. Did you do it with someone else?\nOK = both of us did it, Cancel = just me")){
+  const c2=prompt("Other person's code");const b=byCode(c2);if(!b||b===a){alert("Second code not valid. Submitting as just you.")}else names.push(b)}
+ who[i]=names;pending[i]=url;delete rejected[i];render()}
 const me=document.getElementById("me");const me2=document.getElementById("me2");crew.forEach(c=>{me.add(new Option(c,c));me2.add(new Option(c,c))});me2.onchange=()=>{me.value=me2.value;me.onchange()};
 const face=n=>n>=6?"🤩":n>=4?"😄":n>=2?"🙂":"😐";
 function score(){return [...done].reduce((s,i)=>s+tasks[i][1],0)}
@@ -76,13 +87,13 @@ function render(){
  const t=document.getElementById("tasks");t.innerHTML="";
  tasks.forEach((k,i)=>{const d=document.createElement("div");const isP=i in pending;d.className="task"+(done.has(i)?" done":isP?" pending":(i in rejected)?" rejected":"");
   const status=done.has(i)?"✅ Approved":isP?"⏳ Waiting for Scout":(i in rejected)?"❌ Scout sent it back - redo and upload a new photo":"";
-  d.innerHTML=`<span>${done.has(i)?"✅":isP?"⏳":"⬜"}</span><span>${k[0]}<br><small>${status}</small>${(i in rejected&&!isP&&!done.has(i))?`<div class="scoutnote"><b>Scout's note:</b> ${rejected[i]}</div>`:''}<div class="base">${i in baseline?`<img src="${baseline[i]}" style="width:24px;height:24px">Baseline set by Kristen`:'No baseline yet'} <button class="setb">${i in baseline?'Retake':'Kristen: add baseline'}</button></div></span>${isP?`<img src="${pending[i]}">`:""}<span class="pts">+${k[1]}</span>${(!done.has(i)&&!isP)?'<button class="demo">demo photo</button>':''}`;
+  d.innerHTML=`<span>${done.has(i)?"✅":isP?"⏳":"⬜"}</span><span>${k[0]}${team.has(i)?'<span class="tag">👥 team task</span>':''}<br><small>${status}</small>${(i in who&&(isP||done.has(i)))?`<div class="base">Done by: ${who[i].join(' + ')}</div>`:''}${(i in rejected&&!isP&&!done.has(i))?`<div class="scoutnote"><b>Scout's note:</b> ${rejected[i]}</div>`:''}<div class="base">${i in baseline?`<img src="${baseline[i]}" style="width:24px;height:24px">Baseline set by Kristen`:'No baseline yet'} <button class="setb">${i in baseline?'Retake':'Kristen: add baseline'}</button></div></span>${isP?`<img src="${pending[i]}">`:""}<span class="pts">+${k[1]}</span>${(!done.has(i)&&!isP)?'<button class="demo">demo photo</button>':''}`;
   d.querySelector('.setb').onclick=e=>{e.stopPropagation();if(e.shiftKey||!confirm('Kristen only: take a new baseline photo for "'+k[0]+'"?'))return;baseIdx=i;bi.click()};
-  if(!done.has(i)&&!isP){d.onclick=()=>{if(!clockedIn){alert('Clock in first so you can see today\'s plan.');return}pickIdx=i;fi.click()};d.querySelector('.demo').onclick=e=>{e.stopPropagation();if(!clockedIn){alert('Clock in first.');return}pending[i]=DEMO;delete rejected[i];render()}}
+  if(!done.has(i)&&!isP){d.onclick=()=>{if(!clockedIn){alert('Clock in first so you can see today\'s plan.');return}pickIdx=i;fi.click()};d.querySelector('.demo').onclick=e=>{e.stopPropagation();if(!clockedIn){alert('Clock in first.');return}submit(i,DEMO)}}
   t.appendChild(d)});
  const q=document.getElementById("queue");const keys=Object.keys(pending).filter(i=>!done.has(+i));
  q.innerHTML=keys.length?"":'<div class="note">Nothing waiting. Scout is bored.</div>';
- keys.forEach(i=>{const d=document.createElement("div");d.className="q";d.innerHTML=`<div class="cmp"><figure><img src="${i in baseline?baseline[i]:BASEDEMO}"><br>Baseline</figure><figure><img src="${pending[i]}"><br>Submitted</figure></div><div><b>${me.value}</b>: ${tasks[i][0]}<br><small>Scout: does it match the baseline?${i in baseline?'':' (no baseline yet, Kristen needs to set one)'}</small></div><div class="sp"><button class="ok">Approve</button><button class="no">Send back</button></div>`;
+ keys.forEach(i=>{const d=document.createElement("div");d.className="q";d.innerHTML=`<div class="cmp"><figure><img src="${i in baseline?baseline[i]:BASEDEMO}"><br>Baseline</figure><figure><img src="${pending[i]}"><br>Submitted</figure></div><div><b>${(who[i]||[me.value]).join(' + ')}</b>: ${tasks[i][0]}<br><small>Scout: does it match the baseline?${i in baseline?'':' (no baseline yet, Kristen needs to set one)'}</small></div><div class="sp"><button class="ok">Approve</button><button class="no">Send back</button></div>`;
   d.querySelector('.ok').onclick=()=>{done.add(+i);render()};d.querySelector('.no').onclick=()=>{const n=prompt('Scout\'s note: why is this not accepted?','Counter still has crumbs on the left side. Wipe it again and retake from the same angle.');if(n===null)return;rejected[i]=n||'Does not match the baseline photo.';delete pending[i];render()};q.appendChild(d)});
  const s=score();const next=stations.find(x=>x[2]>s);
  document.getElementById("progress").textContent=`${s} points`+(next?` - ${next[2]-s} more to unlock "${next[0]}"`:" - everything unlocked!");
@@ -93,9 +104,9 @@ function render(){
   d.className="station"+(locked?" locked":"")+(i==playing?" playing":"");
   d.innerHTML=`<span>${locked?"🔒":i==playing?"🔊":"🎶"}</span><div><b>${x[0]}</b><br><small>${locked?"Unlocks at "+x[2]+" points":x[1]}</small></div>${i==playing?"":"<button>Play</button>"}`;
   const b=d.querySelector("button");if(b)b.onclick=()=>{playing=i;render()};st.appendChild(d)});
- const mine=me.value;const rows=crew.map(c=>[c,c==mine?counts[c]+done.size:counts[c]]).sort((a,b)=>b[1]-a[1]);
+ const cred={};[...done].forEach(i=>(who[i]||[]).forEach(n=>cred[n]=(cred[n]||0)+1));const rows=crew.map(c=>[c,counts[c]+(cred[c]||0)]).sort((a,b)=>b[1]-a[1]);
  const max=Math.max(8,...rows.map(r=>r[1]));
  document.getElementById("board").innerHTML=rows.map((r,i)=>`<div class="row"><span>${i==0?"👑":i+1}</span><span class="name">${r[0]}</span><div class="bar"><i style="width:${r[1]/max*100}%"></i></div><span>${r[1]}</span><span class="face">${face(r[1])}</span></div>`).join("");
 }
-me.onchange=()=>{me2.value=me.value;clockedIn=false;acked=false;lists.open.clear();lists.close.clear();renderClock();renderLists();rejected={};done.clear();pending={};playing=0;render()};render();renderClock();renderLists();
+me.onchange=()=>{me2.value=me.value;clockedIn=false;acked=false;lists.open.clear();lists.close.clear();renderClock();renderLists();rejected={};done.clear();pending={};who={};playing=0;render()};render();renderClock();renderLists();
 </script></body></html>
