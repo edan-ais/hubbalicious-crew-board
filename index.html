@@ -32,8 +32,10 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <main id="tab-tasks">
 <section class="card"><h2>✅ Today's Tasks</h2>
 <select id="me" style="display:none"></select>
-<div id="tasks"></div><label class="note" style="display:block"><input type="checkbox" id="auto" checked> Demo: Scout reviews each photo in about 1 minute (turns green or red by itself). Uncheck to use the manual queue only.</label><div class="note"><a href="#" id="rst">Reset demo data</a></div>
-<div class="note">Tap a task and enter your code so we know who did it (team tasks can credit both people). Then take your photo on <a href="#phone" target="_blank">the phone page</a>. The photo goes to Scout for approval before it counts. If Scout sends it back, the note shows here and on your phone. Demo data, saved in this browser only.</div></section>
+<div id="tasks"></div>
+<div class="gp" id="scoutbox"><b>💬 Task list is managed by Scout</b><div class="note" style="margin:2px 0 6px">Kristen just tells Scout what to change. Try: "add a task: clean the cotton candy machine, 2 points, team task" or "remove sweep floor" or "make restock cups a team task".</div>
+<div class="nrow"><textarea id="stxt" style="min-height:44px" placeholder="Message Scout (Kristen only)"></textarea><button class="mic" id="ssend" style="font-size:16px">Send</button></div><div id="slog"></div></div><label class="note" style="display:block"><input type="checkbox" id="auto" checked> Demo: Scout reviews each photo in about 1 minute (turns green or red by itself). Uncheck to use the manual queue only.</label><div class="note"><a href="#" id="rst">Reset demo data</a></div>
+<div class="note">Tap a task and enter your code so we know who did it. The photo goes to Scout for approval before it counts. If Scout sends it back, the note shows here.</div></section>
 <section class="card"><h2>🎵 Music Stations</h2>
 <div id="progress"></div><div class="bar"><i id="pbar"></i></div>
 <div id="stations"></div></section>
@@ -113,7 +115,7 @@ function mgrPanel(){
 function renderLists(){[["open",openL,"openl"],["close",closeL,"closel"]].forEach(([k,L,id])=>{const el=document.getElementById(id);el.innerHTML="";L.forEach((t,i)=>{const d=document.createElement("div");d.className="ck"+(lists[k].has(i)?" on":"");d.innerHTML=`<span>${lists[k].has(i)?"✅":"⬜"}</span><span>${t}${listWho[k][i]?`<br><small>Done by: ${listWho[k][i].join(" + ")}${listWho[k][i].length>1?" (shared)":""}</small>`:""}</span>`;d.onclick=()=>{if(!clockedIn){alert("Clock in first.");return}if(lists[k].has(i)){lists[k].delete(i);delete listWho[k][i]}else{const n=getDoers(true);if(!n)return;lists[k].add(i);listWho[k][i]=n}renderLists()};d.appendChild(helpBtn(t));el.appendChild(d)});el.appendChild(gradePanel(k,L));el.appendChild(mgrPanel())})}
 function renderClock(){document.getElementById("clockst").textContent=clockedIn?"🟢 "+me.value+" clocked in since "+clockAt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):"⚪ Clocked out";const b=document.getElementById("clockbtn");b.textContent=clockedIn?"Clock out":"Clock in";b.className=clockedIn?"out":""}
 document.getElementById("clockbtn").onclick=()=>{
- if(!clockedIn){const cc=prompt("Clock in: enter your personal code (demo: Kristen 1111, Ava 2222, Jake 3333, Mia 4444, Noah 5555, Haley 6666)");if(cc===null)return;const who0=byCode(cc);if(!who0){alert("Code not recognized.");return}me.value=who0;const ob=document.getElementById("ovbody");ob.innerHTML=`<p><b>${tasks.length} tasks</b> on the board today:</p><ul>${tasks.map(t=>`<li>${t[0]}</li>`).join("")}</ul><p>Opening list: ${openL.length} items. Closing list: ${closeL.length} items.</p><p>📣 Manager note: Harvest Festival leftovers are on sale, push the older candy.</p>`;document.getElementById("ack").checked=false;document.getElementById("start").disabled=true;document.getElementById("ov").classList.add("show")}
+ if(!clockedIn){const cc=prompt("Clock in: enter your personal code (demo: Kristen 1111, Ava 2222, Jake 3333, Mia 4444, Noah 5555, Haley 6666)");if(cc===null)return;const who0=byCode(cc);if(!who0){alert("Code not recognized.");return}me.value=who0;const ob=document.getElementById("ovbody");ob.innerHTML=`<p><b>${tasks.filter((t,i)=>!removed.has(i)).length} tasks</b> on the board today:</p><ul>${tasks.filter((t,i)=>!removed.has(i)).map(t=>`<li>${t[0]}</li>`).join("")}</ul><p>Opening list: ${openL.length} items. Closing list: ${closeL.length} items.</p><p>📣 Manager note: Harvest Festival leftovers are on sale, push the older candy.</p>`;document.getElementById("ack").checked=false;document.getElementById("start").disabled=true;document.getElementById("ov").classList.add("show")}
  else{const left=closeL.length-lists.close.size;if(left>0&&!confirm(left+" closing items not done. Clock out anyway?"))return;clockedIn=false;renderClock();renderLists();render()}};
 document.getElementById("ack").onchange=e=>document.getElementById("start").disabled=!e.target.checked;
 document.getElementById("cancel").onclick=()=>document.getElementById("ov").classList.remove("show");
@@ -122,7 +124,7 @@ document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.que
 
 const lastWeek={Kristen:3,Ava:6,Jake:0,Mia:2,Noah:0};const lastNeeds={open:3,close:4};
 const codes={Haley:"6666",Kristen:"1111",Ava:"2222",Jake:"3333",Mia:"4444",Noah:"5555"};
-const team=new Set([2,3,7]);let who={};
+const team=new Set([2,3,7]);const removed=new Set();let who={};
 const byCode=c=>Object.keys(codes).find(n=>codes[n]===(c||"").trim());
 
 
@@ -147,8 +149,8 @@ renderNotes()})();
 let awaiting={};
 const KEY="hcb-v1";
 let syncing=false;
-function saveState(){if(syncing)return;try{localStorage.setItem(KEY,JSON.stringify({awaiting,pending,who,rejected,baseline,done:[...done]}));}catch(e){alert("Storage full, clear demo data.")}}
-function loadState(){try{const o=JSON.parse(localStorage.getItem(KEY)||"null");if(!o)return;awaiting=o.awaiting||{};pending=o.pending||{};who=o.who||{};rejected=o.rejected||{};baseline=o.baseline||baseline;done=new Set(o.done||[])}catch(e){}}
+function saveState(){if(syncing)return;try{localStorage.setItem(KEY,JSON.stringify({tasks,team:[...team],removed:[...removed],awaiting,pending,who,rejected,baseline,done:[...done]}));}catch(e){alert("Storage full, clear demo data.")}}
+function loadState(){try{const o=JSON.parse(localStorage.getItem(KEY)||"null");if(!o)return;if(o.tasks){tasks.length=0;o.tasks.forEach(t=>tasks.push(t));team.clear();(o.team||[]).forEach(x=>team.add(x));removed.clear();(o.removed||[]).forEach(x=>removed.add(x))}awaiting=o.awaiting||{};pending=o.pending||{};who=o.who||{};rejected=o.rejected||{};baseline=o.baseline||baseline;done=new Set(o.done||[])}catch(e){}}
 window.addEventListener("storage",e=>{if(e.key===KEY){syncing=true;loadState();render();renderPhone();syncing=false}});
 function shrink(file,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const m=480,k=Math.min(1,m/Math.max(im.width,im.height));const c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.7))};im.src=r.result};r.readAsDataURL(file)}
 const PHONE=/phone/.test(location.hash+location.search);let phoneUser=null;
@@ -158,7 +160,7 @@ function renderPhone(){if(!PHONE)return;const el=document.getElementById("phbody
  let h=`<p>Hi <b>${phoneUser}</b>! <a href="#" id="pout">Sign out</a></p>`;
  const mine=tasks.map((t,i)=>i).filter(i=>awaiting[i]&&awaiting[i].includes(phoneUser));
  h+="<h3>Photos waiting on you</h3>"+(mine.length?mine.map(i=>`<div class="ck"><span>${tasks[i][0]}</span><span style="margin-left:auto"><button class="pb snap" data-i="${i}">📷 Take photo</button></span></div>${i in rejected?`<div class="scoutnote"><b>Scout's note:</b> ${rejected[i]}</div>`:""}`).join(""):'<div class="note">Nothing waiting. Check off a task on the board first.</div>');
- if(phoneUser==="Kristen"){h+="<h3>Manager: baseline photos</h3>"+tasks.map((t,i)=>`<div class="ck"><span>${i in baseline?"✅":"⬜"}</span><span>${t[0]}</span><span style="margin-left:auto"><button class="pb bsl" data-i="${i}">${i in baseline?"Retake":"Add"}</button></span></div>`).join("")}
+ if(phoneUser==="Kristen"){h+="<h3>Manager: baseline photos</h3>"+tasks.map((t,i)=>removed.has(i)?"":`<div class="ck"><span>${i in baseline?"✅":"⬜"}</span><span>${t[0]}</span><span style="margin-left:auto"><button class="pb bsl" data-i="${i}">${i in baseline?"Retake":"Add"}</button></span></div>`).join("")}
  el.innerHTML=h;document.getElementById("pout").onclick=e=>{e.preventDefault();phoneUser=null;renderPhone()};
  el.querySelectorAll(".snap").forEach(b=>b.onclick=()=>{pickIdx=+b.dataset.i;fi.click()});
  el.querySelectorAll(".bsl").forEach(b=>b.onclick=()=>{baseIdx=+b.dataset.i;bi.click()})}
@@ -169,6 +171,19 @@ if(!PHONE)setInterval(()=>{const on=document.getElementById("auto").checked;let 
  Object.keys(pending).forEach(i=>{if(done.has(+i))return;if(!since[i])since[i]=Date.now();
   if(on&&Date.now()-since[i]>=60000){delete since[i];if(Math.random()<.7){done.add(+i)}else{rejected[i]=notesBank[Math.floor(Math.random()*notesBank.length)];delete pending[i]}ch=true}});
  if(ch)render();else countdown()},1000);
+
+const slog=[];
+function scoutSay(m){slog.unshift(m);document.getElementById("slog").innerHTML=slog.slice(0,5).map(x=>`<div class="gline">${x}</div>`).join("")}
+function findTask(q){q=q.toLowerCase().replace(/[^a-z0-9 ]/g,"").trim();return tasks.findIndex((t,i)=>!removed.has(i)&&(t[0].toLowerCase().includes(q)||q.includes(t[0].toLowerCase().replace(/[^a-z0-9 ]/g,""))))}
+function scoutDo(msg){let m;
+ if(m=msg.match(/^\s*(?:please\s+)?add(?: a| an)?(?: new)?(?: task)?\s*:?\s*(.+)$/i)){let t=m[1];const pts=(t.match(/(\d+)\s*(?:points?|pts?)/i)||[])[1];const tm=/team/i.test(t);t=t.replace(/[,;]?\s*(?:worth\s*)?\d+\s*(?:points?|pts?)/i,"").replace(/[,;]?\s*(?:as a |a )?team task/i,"").replace(/[.,;\s]+$/,"").trim();if(!t)return"What should the task be called?";t=t[0].toUpperCase()+t.slice(1);tasks.push([t,+pts||1]);if(tm)team.add(tasks.length-1);return`✅ Added "${t}" (${+pts||1} pt${(+pts||1)>1?"s":""}${tm?", team task":""}). It's on the board now. Want me to ask you for a baseline photo?`}
+ if(m=msg.match(/^\s*(?:please\s+)?(?:remove|delete|drop)\s+(?:the\s+)?(?:task\s*:?\s*)?(.+?)\.?$/i)){const i=findTask(m[1]);if(i<0)return`I couldn't find a task like "${m[1]}".`;removed.add(i);return`🗑 Removed "${tasks[i][0]}". Past credit for it is kept.`}
+ if(m=msg.match(/^\s*make\s+(.+?)\s+(?:a\s+)?team task\.?$/i)){const i=findTask(m[1]);if(i<0)return`I couldn't find a task like "${m[1]}".`;team.add(i);return`👥 "${tasks[i][0]}" is now a team task.`}
+ if(m=msg.match(/^\s*make\s+(.+?)\s+worth\s+(\d+)\s*(?:points?|pts?)?\.?$/i)){const i=findTask(m[1]);if(i<0)return`I couldn't find a task like "${m[1]}".`;tasks[i][1]=+m[2];return`🔢 "${tasks[i][0]}" is now worth ${m[2]}.`}
+ return"I can add a task, remove one, make one a team task, or change its points. Try: add a task: wipe the windows, 2 points.";}
+document.getElementById("ssend").onclick=()=>{const ta=document.getElementById("stxt");const v=ta.value.trim();if(!v)return;
+ if(!(clockedIn&&me.value==="Kristen")){alert("Only Kristen can change the task list. Clock in with her code.");return}
+ scoutSay("<b>You:</b> "+v.replace(/</g,"&lt;"));const r=scoutDo(v);scoutSay("<b>Scout:</b> "+r);ta.value="";render()};
 function getDoers(isTeam){
  const c=prompt("Enter your personal code (demo codes: Kristen 1111, Ava 2222, Jake 3333, Mia 4444, Noah 5555, Haley 6666)");if(c===null)return null;
  const a=byCode(c);if(!a){alert("Code not recognized. Try again.");return null}
@@ -182,7 +197,7 @@ const me=document.getElementById("me");const me2=document.getElementById("me2");
 function score(){return [...done].reduce((s,i)=>s+tasks[i][1],0)}
 function render(){saveState();
  const t=document.getElementById("tasks");t.innerHTML="";
- tasks.forEach((k,i)=>{const d=document.createElement("div");const isP=i in pending;d.className="task"+(done.has(i)?" done":isP?" pending":(i in awaiting)?" pending":(i in rejected)?" rejected":"");
+ tasks.forEach((k,i)=>{if(removed.has(i))return;const d=document.createElement("div");const isP=i in pending;d.className="task"+(done.has(i)?" done":isP?" pending":(i in awaiting)?" pending":(i in rejected)?" rejected":"");
   const status=(i in awaiting)?"📱 Waiting for "+awaiting[i].join(" + ")+"'s photo from their phone":done.has(i)?"✅ Approved":isP?"⏳ Pending - waiting approval":(i in rejected)?"❌ Scout sent it back - redo and upload a new photo":"";
   d.innerHTML=`<span>${done.has(i)?"✅":isP?"⏳":"⬜"}</span><span>${k[0]}${team.has(i)?'<span class="tag">👥 team task</span>':''}${isP?'<span class="tag" style="background:#ffd23f">⏳ pending - waiting approval</span><span class="cd" data-i="'+i+'"></span>':''}<br><small>${status}</small>${(i in who&&(isP||done.has(i)))?`<div class="base">Done by: ${who[i].join(' + ')}</div>`:''}${(i in rejected&&!isP&&!done.has(i))?`<div class="scoutnote"><b>Scout's note:</b> ${rejected[i]}</div>`:''}<div class="base">${i in baseline?`<img src="${baseline[i]}" style="width:24px;height:24px">Baseline set by Kristen`:'No baseline yet (Kristen adds it from her phone)'} </div></span>${isP?`<img src="${pending[i]}">`:""}<span class="pts">+${k[1]}</span>`;
   if(!done.has(i)&&!isP&&!(i in awaiting)){d.onclick=()=>{if(!clockedIn){alert('Clock in first so you can see today\'s plan.');return}submit(i)}}
