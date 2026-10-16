@@ -208,11 +208,6 @@ Ten sections plus an overview and a closing list of open questions for David and
 | `README.md` | Short overview and design notes |
 | `SPEC.md` | Pointer to this README |
 
-## Display notes: tablets and the TV
-
-- **Tablets.** The page asks for a Screen Wake Lock so the screen stays on while it is open (see section 2). Also set Auto-Lock to Never (Settings > Display).
-- **TV (Roku).** A Roku is not a browser the wake lock can reach. Set Settings > Theme > Screensaver wait time > Disable screensaver, and Settings > Network > Bandwidth saver > Off (that one stops the "are you still watching" prompt after about 4 hours). Menu names vary a little by model.
-
 ## Appendix: earlier design notes (not built yet)
 
 - **County assessment export.** The store hires kids through a county second-chances program and sends assessments back to the county. The shift and score data should export as a per-kid report: shifts worked, reliability (clock-ins, on-time), tasks done, approved vs sent-back, improvement trend, and Scout/Kristen-approved notes. The county's actual assessment form is still to come, so the export should be shaped to match it once we have it.
