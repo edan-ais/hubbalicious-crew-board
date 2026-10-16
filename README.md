@@ -19,3 +19,11 @@ Intended behavior: when the inactivity signal trips (no register sales, no tasks
 
 ### Urgent "Need a manager ASAP" button (backend phase for the alert)
 The red button is on every screen, front and back. In the template, tapping it asks for the employee code, logs who pressed it and when, shows a "Help is on the way" confirmation, and adds an URGENT line to Kristen's review. The real build should fire an immediate alert to Kristen and David (text and push notification) with who pressed it, the time and which tablet it came from, and should keep nagging until someone acknowledges it. It needs a backend and a messaging service to send the alerts, so none of that exists yet.
+
+### Cameras and the urgent button (backend phase, planned)
+Security cameras with two-way talk are planned as a core store feature. Managers will be able to see the floor and talk to staff through them, and the cameras will tie into the dashboard over time. The "Need a manager" button should be designed with that in mind:
+- Pressing it texts both David and Kristen right away (with push as a second channel). The message says who pressed it, the time and which tablet or area.
+- The alert record should be able to carry camera context later: which camera covers that tablet or area, a snapshot or short clip from just before the press, and a link that opens a live view with two-way talk. Leave room for a camera reference on each alert even though nothing is attached today.
+- Keep the alert open until a manager acknowledges it, and log who picked it up and when. If nobody acknowledges within a set window, escalate to the other manager.
+- The camera disclosure in the app footer ("You're on camera") already covers the staff-facing notice. When two-way talk goes live, check what the disclosure and any posted signs need to say. Recording and audio rules are legal items for David to verify, not something the app decides.
+Nothing in this section is built in the template. It is a note so the alert and its data are shaped to take camera context later.
