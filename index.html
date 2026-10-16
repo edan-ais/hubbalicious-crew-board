@@ -27,6 +27,9 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <div id="phone" style="display:none;max-width:520px;margin:0 auto;padding:14px"><div class="card"><h2>📱 My Phone</h2><div id="phbody"></div></div></div>
 <div class="bar2"><select id="me2" style="display:none"></select><button id="clockbtn" class="cin">Clock in</button><span class="st" id="clockst" style="flex:1;text-align:center"></span><button id="clockout" class="out">Clock out</button></div>
 <div class="tabs"><button data-t="dash" class="on">Dashboard</button><button data-t="tasks">Tasks &amp; Music</button><button data-t="crew">Crew</button><button data-t="open">Opening and Closing Checklist</button><button data-t="hb">Handbook</button></div>
+<div id="slowbar" style="display:none;background:#ff9800;color:#000;padding:14px;text-align:center;font-size:20px;font-weight:bold;animation:pulse 1s infinite alternate"><span>🔔 Slow store - come look at me! Slow means task time.</span> <button id="slowack" class="pb" style="margin-left:10px;font-size:18px">I'm here - silence it</button></div>
+<style>@keyframes pulse{from{background:#ff9800}to{background:#ffd54f}}</style>
+
 <div class="ov" id="ov"><div class="modal"><h2>Hi! Here's today</h2><div id="ovbody"></div><label style="display:block;margin:12px 0"><input type="checkbox" id="ack"> I read this and I'll get it done</label><button id="start" disabled>Start my shift</button> <button id="cancel" style="background:#999">Cancel</button></div></div>
 <div class="ov" id="hov"><div class="modal hm"><h2 id="htitle"></h2><div id="hbody"></div><p><button class="aud" id="haud">🔊 Play audio</button> <button id="hclose" style="background:#999">Close</button></p><div class="note">Demo: audio reads the steps aloud with the browser voice. Real recorded audio comes later. Kristen would write or record these.</div></div></div>
 <main id="tab-dash">
@@ -36,7 +39,7 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <div id="chips"><button class="chip" data-m="I have an idea for the store: ">💡 Share an idea</button><button class="chip" data-m="How do I ">❓ Ask a question</button><button class="chip" data-m="who's working today?">👥 Who's working?</button><button class="chip" data-m="what are my tasks?">✅ My tasks</button></div>
 <div class="cin2"><textarea id="stxt" placeholder="Ask about the store, or tell Scout what you'd like improved..."></textarea><button id="ssend">Send</button></div>
 <div id="ideas"></div></section>
-<section class="card full" id="npcard"><h2>🎵 Now playing</h2><div id="np" style="font-size:20px;font-weight:bold"></div><div class="note" id="npsub"></div><button class="pb" id="npgo" style="margin-top:6px">Open Tasks &amp; Music</button></section>
+<section class="card full" id="npcard"><h2>🎵 Now playing</h2><div id="np" style="font-size:20px;font-weight:bold"></div><div class="note" id="npsub"></div><div class="note" id="slowlog"></div><button class="pb" id="slowdemo" style="opacity:.6;margin-top:6px">Demo: simulate slow sales</button> <button class="pb" id="npgo" style="margin-top:6px">Open Tasks &amp; Music</button></section>
 </main>
 <main id="tab-tasks" style="display:none">
 <section class="card full"><h2>🎵 Music Stations</h2>
@@ -272,6 +275,13 @@ const me=document.getElementById("me");const me2=document.getElementById("me2");
 function score(){return [...done].reduce((s,i)=>s+tasks[i][1],0)}
 function renderNP(){const e=document.getElementById('np');if(!e)return;e.textContent=stations[playing][0];document.getElementById('npsub').textContent=score()+' points unlocked so far. Better stations unlock as tasks get approved.'}
 document.getElementById('npgo').onclick=()=>document.querySelector('.tabs [data-t=tasks]').click();
+
+let slowOn=false,slowTimer=null,actx=null;
+function ding(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();[880,1175].forEach((f,k)=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(actx.destination);const t=actx.currentTime+k*0.18;g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.5);o.start(t);o.stop(t+.5)})}catch(e){}}
+function slowStart(){if(slowOn)return;slowOn=true;document.getElementById("slowbar").style.display="block";ding();slowTimer=setInterval(ding,4000)}
+function slowStop(by){slowOn=false;clearInterval(slowTimer);document.getElementById("slowbar").style.display="none";const l=document.getElementById("slowlog");if(l)l.textContent="Slow-sales alert acknowledged by "+by+" at "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+"."}
+document.getElementById("slowack").onclick=()=>{const c=prompt("Enter your code to silence the alert");const p=c&&byCode(c);if(!p){alert("Code not recognized.");return}slowStop(typeof p==="string"?p:(p.name||p))};
+document.getElementById("slowdemo").onclick=slowStart;
 function renderWho(){const el=document.getElementById('who');el.innerHTML=SCHEDULE.map(x=>{const c=clocked[x[0]];return `<div class="wr"><span class="nm">${x[0]}</span><span class="tm">${x[1]}</span><span class="stt">${c?'🟢 Clocked in at '+c:'⚪ Not in yet'}</span></div>`}).join('')+(Object.keys(clocked).filter(n=>!SCHEDULE.some(x=>x[0]===n)).map(n=>`<div class="wr"><span class="nm">${n}</span><span class="tm">not on schedule</span><span class="stt">🟢 Clocked in at ${clocked[n]}</span></div>`).join(''))}
 function render(){saveState();try{renderWho();renderNP()}catch(e){}try{renderIdeas()}catch(e){}
  const t=document.getElementById("tasks");t.innerHTML="";
