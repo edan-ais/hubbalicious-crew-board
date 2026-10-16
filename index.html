@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hubbalicious Crew Board</title>
+<style>
+:root{--pink:#ff3d9a;--purple:#6a2cff;--yellow:#ffd23f;--bg:#fff4fb;--ink:#2b1745}
+*{box-sizing:border-box}body{margin:0;font-family:"Trebuchet MS",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(90deg,var(--pink),var(--purple));color:#fff;padding:18px 24px}
+header h1{margin:0;font-size:28px}header p{margin:4px 0 0;opacity:.9}
+main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-width:1100px;margin:auto}
+@media(max-width:800px){main{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 3px 10px #6a2cff22}
+.card h2{margin:0 0 10px;font-size:20px}.full{grid-column:1/-1}
+.task{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;border:2px solid #f0e0f7;margin-bottom:8px;cursor:pointer}
+.task.done{background:#e9ffe9;border-color:#8be08b;text-decoration:line-through;opacity:.8}
+.task .pts{margin-left:auto;font-weight:bold;color:var(--purple)}
+.who{display:flex;gap:8px;align-items:center;margin-bottom:10px}select{font-size:16px;padding:6px;border-radius:8px}
+.bar{height:14px;background:#eee;border-radius:8px;overflow:hidden}.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--yellow),var(--pink));width:0;transition:width .4s}
+.station{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;margin-top:8px;background:#f6f0ff}
+.station.locked{opacity:.45;filter:grayscale(1)}.station.playing{outline:3px solid var(--pink);background:#fff0f8}
+.station button{margin-left:auto;border:0;background:var(--purple);color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer}
+.station.locked button{display:none}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0e0f7}
+.row .name{width:80px;font-weight:bold}.row .bar{flex:1}.row .face{font-size:24px;width:34px;text-align:center}
+.note{font-size:13px;color:#7a6a90;margin-top:10px}
+</style></head><body>
+<header><h1>🍬 Hubbalicious Crew Board</h1><p>Finish your tasks. Unlock better music. Collect smileys.</p></header>
+<main>
+<section class="card"><h2>✅ Today's Tasks</h2>
+<div class="who">I am: <select id="me"></select></div>
+<div id="tasks"></div>
+<div class="note">Tap a task to mark it done (demo data, nothing is saved yet).</div></section>
+<section class="card"><h2>🎵 Music Stations</h2>
+<div id="progress"></div><div class="bar"><i id="pbar"></i></div>
+<div id="stations"></div></section>
+<section class="card full"><h2>🏆 Leaderboard</h2><div id="board"></div>
+<div class="note">😐 0-1 &nbsp; 🙂 2-3 &nbsp; 😄 4-5 &nbsp; 🤩 6+ tasks done</div></section>
+</main>
+<script>
+const crew=["Kristen","Ava","Jake","Mia","Noah"];
+const tasks=[["Wipe down counters",1],["Restock cups & lids",1],["Refill candy bins",2],["Clean shake machine",2],["Sweep floor",1],["Wipe soda station",1],["Take out trash",1],["Front window clean",2]];
+// demo starting counts for the rest of the crew
+const counts={Kristen:3,Ava:5,Jake:1,Mia:2,Noah:0};
+const stations=[["Hubbalicious Songs Loop","The default. Same songs, on repeat.",0],["Pop Hits","",2],["Throwback Jams","",4],["Chill Lo-fi","",6],["Your Pick (any station)","",8]];
+let done=new Set();let playing=0;
+const me=document.getElementById("me");crew.forEach(c=>me.add(new Option(c,c)));
+const face=n=>n>=6?"🤩":n>=4?"😄":n>=2?"🙂":"😐";
+function score(){return [...done].reduce((s,i)=>s+tasks[i][1],0)}
+function render(){
+ const t=document.getElementById("tasks");t.innerHTML="";
+ tasks.forEach((k,i)=>{const d=document.createElement("div");d.className="task"+(done.has(i)?" done":"");
+  d.innerHTML=`<span>${done.has(i)?"✅":"⬜"}</span><span>${k[0]}</span><span class="pts">+${k[1]}</span>`;
+  d.onclick=()=>{done.has(i)?done.delete(i):done.add(i);render()};t.appendChild(d)});
+ const s=score();const next=stations.find(x=>x[2]>s);
+ document.getElementById("progress").textContent=`${s} points`+(next?` - ${next[2]-s} more to unlock "${next[0]}"`:" - everything unlocked!");
+ document.getElementById("pbar").style.width=Math.min(100,s/8*100)+"%";
+ if(stations[playing][2]>s)playing=0;
+ const st=document.getElementById("stations");st.innerHTML="";
+ stations.forEach((x,i)=>{const locked=x[2]>s;const d=document.createElement("div");
+  d.className="station"+(locked?" locked":"")+(i==playing?" playing":"");
+  d.innerHTML=`<span>${locked?"🔒":i==playing?"🔊":"🎶"}</span><div><b>${x[0]}</b><br><small>${locked?"Unlocks at "+x[2]+" points":x[1]}</small></div>${i==playing?"":"<button>Play</button>"}`;
+  const b=d.querySelector("button");if(b)b.onclick=()=>{playing=i;render()};st.appendChild(d)});
+ const mine=me.value;const rows=crew.map(c=>[c,c==mine?counts[c]+done.size:counts[c]]).sort((a,b)=>b[1]-a[1]);
+ const max=Math.max(8,...rows.map(r=>r[1]));
+ document.getElementById("board").innerHTML=rows.map((r,i)=>`<div class="row"><span>${i==0?"👑":i+1}</span><span class="name">${r[0]}</span><div class="bar"><i style="width:${r[1]/max*100}%"></i></div><span>${r[1]}</span><span class="face">${face(r[1])}</span></div>`).join("");
+}
+me.onchange=()=>{done.clear();playing=0;render()};render();
+</script></body></html>
