@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="img/gumball-icon-gold-CIkEp_Fi.png"><link rel="apple-touch-icon" href="img/gumball-icon-gold-CIkEp_Fi.png"><title>Hubbalicious Crew Board</title>
-<style>
+<style>.demoonly{display:none!important}body.demo .demoonly{display:block!important}body.demo button.demoonly{display:inline-block!important}
 :root{--pink:#ff3d9a;--purple:#6a2cff;--yellow:#ffd23f;--bg:#fff4fb;--ink:#2b1745}
 *{box-sizing:border-box}body{margin:0;font-family:"Trebuchet MS",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
 header{background:linear-gradient(90deg,var(--pink),var(--purple));color:#fff;padding:18px 24px}
@@ -31,15 +31,15 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <style>@keyframes pulse{from{background:#ff9800}to{background:#ffd54f}}</style>
 
 <div class="ov" id="ov"><div class="modal"><h2>Hi! Here's today</h2><div id="ovbody"></div><label style="display:block;margin:12px 0"><input type="checkbox" id="ack"> I read this and I'll get it done</label><button id="start" disabled>Start my shift</button> <button id="cancel" style="background:#999">Cancel</button></div></div>
-<div class="ov" id="hov"><div class="modal hm"><h2 id="htitle"></h2><div id="hbody"></div><p><button class="aud" id="haud">🔊 Play audio</button> <button id="hclose" style="background:#999">Close</button></p><div class="note">Demo: audio reads the steps aloud with the browser voice. Real recorded audio comes later. Kristen would write or record these.</div></div></div>
+<div class="ov" id="hov"><div class="modal hm"><h2 id="htitle"></h2><div id="hbody"></div><p><button class="aud" id="haud">🔊 Play audio</button> <button id="hclose" style="background:#999">Close</button></p></div></div>
 <main id="tab-dash">
-<section class="card full" id="whocard"><h2>👥 Who's working today</h2><div id="who"></div><div class="note">Placeholder schedule. Real scheduling comes later.</div></section>
+<section class="card full" id="whocard"><h2>👥 Who's working today</h2><div id="who"></div></section>
 <section class="card full" id="scoutcard"><div class="chead"><span class="av">🐶</span><div><b style="font-size:20px">Hubba</b><br><small>● online · here to help</small></div></div>
 <div class="bub sc" id="scgreet" style="max-width:100%;margin-bottom:8px;font-size:17px"><b>Hubba's here to help!</b> Ask anything about the store, share what you'd like to see improved, or ask me questions. <button class="vbtn" id="gvoice" title="Hear this" aria-label="Hear this message" style="border:0;background:rgba(0,0,0,.08);border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:16px;vertical-align:middle;margin-left:6px">🔊</button></div><div id="chat"></div>
 <div id="chips"><button class="chip" data-m="I have an idea for the store: ">💡 Share an idea</button><button class="chip" data-m="How do I ">❓ Ask a question</button><button class="chip" data-m="who's working today?">👥 Who's working?</button><button class="chip" data-m="what are my tasks?">✅ My tasks</button></div>
 <div class="cin2"><textarea id="stxt" placeholder="Ask about the store, or tell Hubba what you'd like improved..."></textarea><button id="ssend">Send</button></div>
 <div id="ideas"></div></section>
-<section class="card full" id="npcard" style="padding:8px"><div class="note" id="slowlog"></div><button class="pb" id="slowdemo" style="opacity:.6">Demo: simulate slow sales</button></section>
+<section class="card full" id="npcard" style="padding:8px"><div class="note" id="slowlog"></div><button class="pb demoonly" id="slowdemo" style="opacity:.6">Simulate slow sales</button></section>
 </main>
 <main id="tab-tasks" style="display:none">
 <section class="card" style="order:2"><h2>🎵 Music Stations</h2>
@@ -49,12 +49,12 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <section class="card" style="order:1"><h2>✅ Today's Tasks</h2><div class="note" style="background:#f3e8ff;padding:8px;border-radius:8px;margin-bottom:8px">Do them in this order: <b>Priority 1 - Production</b> first (making and packing candy), then <b>Priority 2 - Restock</b> (refill what is running low), then <b>Priority 3 - Cleaning</b> (keep the store spotless). They all matter. Tap a colored tag to see what it means.</div>
 <select id="me" style="display:none"></select>
 <div id="tasks"></div>
-<label class="note" style="display:block">Demo: pretend the next task took <input id="demomin" type="number" min="0" style="width:60px"> minutes (blank = real time since the person's last check-off or clock-in)</label><div class="note"><a href="#" id="rst">Reset demo data</a></div>
+<label class="note demoonly">Pretend the next task took <input id="demomin" type="number" min="0" style="width:60px"> minutes (blank = real time since the person's last check-off or clock-in)</label><div class="note demoonly"><a href="#" id="rst">Reset data</a></div>
 <div class="note">Tap a task and enter your code so we know who did it. It checks off and counts right away. Kristen sees any notes in her own view.</div></section>
 </main>
 <main id="tab-crew" style="display:none">
 <section class="card full"><h2>🏆 Crew Board</h2><div id="kidboard"></div></section>
-<section class="card full" id="staffcard" style="display:none"><h2>\uD83D\uDC65 Staffing signal (Kristen / David)</h2><div class="note">Unfinished work next to how many people were on shift. Everything matters: the store has to hit its standard AND the work has to get done. If a pattern of carry-overs lines up with thin staffing, that is a scheduling problem, not a worker problem. Past shifts below are made-up demo data.</div><div id="staffbody"></div></section>
+<section class="card full" id="staffcard" style="display:none"><h2>\uD83D\uDC65 Staffing signal (Kristen / David)</h2><div class="note">Unfinished work next to how many people were on shift. Everything matters: the store has to hit its standard AND the work has to get done. If a pattern of carry-overs lines up with thin staffing, that is a scheduling problem, not a worker problem.</div><div id="staffbody"></div></section>
 <section class="card full" id="mgrcard" style="display:none"><h2>📊 Manager view: shift scores (Kristen only)</h2>
 <div id="board"></div>
 <div class="note"><b>How the score works:</b> each shift gets a score where <b>1.00 = met expectations</b>. Expected output is about 1 task per person per hour, softened when the store is busy (when the store is busy the target drops, so customers come first), and scaled to staffing: two people on shift are held to a two-person output, one person to a one-person output. A shift's score blends how the whole crew did against its target with how you did against yours. Your leaderboard number is the <b>median</b> of your shift scores, so one shift a week competes fairly with every shift, and one weird shift can't swing it. Improving on your own last week earns 📈. Credit goes to whoever's code was entered, approved tasks only.</div></section>
@@ -63,7 +63,7 @@ main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:18px;max-widt
 <section class="card full"><h2>📝 How it was left</h2><div class="note" style="margin:0 0 8px">Leave notes for the next shift: what's low, what broke, what's done. Type, or tap the mic and just talk.</div>
 <div class="nrow"><textarea id="lnote" placeholder="e.g. Shake machine is cleaned but the vanilla is almost out..."></textarea><button class="mic" id="mic" title="Talk">🎤</button></div>
 <div id="micst" class="note"></div><button id="lsave" style="margin-top:8px;border:0;border-radius:10px;padding:8px 14px;color:#fff;background:var(--pink);cursor:pointer">Save note</button><div id="lnotes" style="margin-top:10px"></div></section></main>
-<main id="tab-back" style="display:none"><section class="card full"><h2>🍳 Production (back of house)</h2><div class="note">Placeholder production list for the back tablet: cooking and packaging. Every item still needs a code (or both) to check off.</div><div id="backl"></div></section></main>
+<main id="tab-back" style="display:none"><section class="card full"><h2>🍳 Production (back of house)</h2><div class="note">Cooking and packaging. Every item needs a code (or both) to check off.</div><div id="backl"></div></section></main>
 <main id="tab-hb" style="display:none"><section class="card full"><h2>📖 Employee Handbook</h2><div class="callout warn" style="margin-top:0"><b>Draft - not final store policy.</b> Yellow items need David to check or decide. Blue items need a fill-in.</div>
 <input id="hbq" placeholder="Search the handbook (try: breaks, uniform, cash)" style="width:100%;font-size:17px;padding:10px;border-radius:10px;border:2px solid #e0d0f0">
 <div class="note" id="hbcount"></div><div id="hblist"></div>
@@ -141,7 +141,7 @@ function mgrPanel(){
 const overrides=[],carry=[];let demoUnlock=false;setInterval(()=>{if(closeLocked===undefined)return;try{renderLists()}catch(e){}},60000);
 function closeLocked(){if(phase!=="close"||demoUnlock)return false;const n=new Date();return n.getHours()<15}
 function renderLists(){const k=phase,L=k==="open"?openL:closeL;const el=document.getElementById("openl");el.innerHTML="";
- if(closeLocked()){document.getElementById("cltitle").textContent="🌙 Closing checklist";document.getElementById("clprog").textContent="🔒 Locked. The closing checklist unlocks at 3:00 PM, one hour before close (4:00 PM).";document.getElementById("clsign").innerHTML='<button id="demoul" class="pb" style="margin-top:6px;opacity:.6">Demo only: unlock now</button>';document.getElementById("demoul").onclick=()=>{demoUnlock=true;renderLists()};return}
+ if(closeLocked()){document.getElementById("cltitle").textContent="🌙 Closing checklist";document.getElementById("clprog").textContent="🔒 Locked. The closing checklist unlocks at 3:00 PM, one hour before close (4:00 PM).";document.getElementById("clsign").innerHTML='<button id="demoul" class="pb demoonly" style="margin-top:6px;opacity:.6">Unlock now</button>';document.getElementById("demoul").onclick=()=>{demoUnlock=true;renderLists()};return}
 
  document.getElementById("cltitle").textContent=k==="open"?"🌅 Opening checklist":"🌙 Closing checklist";
  document.getElementById("clprog").textContent=lists[k].size+" of "+L.length+" confirmed. Every item needs the code of whoever did it (or both of you) before it checks off. When all are done, sign off and the list flips to the "+(k==="open"?"closing":"opening")+" list.";
@@ -160,8 +160,9 @@ function renderLists(){const k=phase,L=k==="open"?openL:closeL;const el=document
  el.parentNode.querySelectorAll(".gp").forEach(x=>x.remove());el.parentNode.appendChild(gradePanel(k,L));el.parentNode.appendChild(mgrPanel())}
 function renderClock(){document.getElementById("clockst").textContent=clockedIn?"🟢 "+me.value+" clocked in since "+clockAt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):"";document.getElementById("clockbtn").disabled=clockedIn;document.getElementById("clockout").disabled=!clockedIn}
 const clockToggle=()=>{
- if(!clockedIn){const cc=prompt("Clock in: enter your personal code (demo: Kristen 1111, Ava 2222, Jake 3333, Mia 4444, Noah 5555, Haley 6666)");if(cc===null)return;const who0=byCode(cc);if(!who0){alert("Code not recognized.");return}me.value=who0;const ob=document.getElementById("ovbody");ob.innerHTML=`<p><b>${tasks.filter((t,i)=>!removed.has(i)).length} tasks</b> on the board today:</p><ul>${tasks.filter((t,i)=>!removed.has(i)).map(t=>`<li>${t[0]}</li>`).join("")}</ul><p>Opening list: ${openL.length} items. Closing list: ${closeL.length} items.</p><p>📣 Manager note: Harvest Festival leftovers are on sale, push the older candy.</p>`;document.getElementById("ack").checked=false;document.getElementById("start").disabled=true;document.getElementById("ov").classList.add("show")}
- else{const left=phase==="close"?closeL.length-lists.close.size:0;const last=Object.keys(clocked).length<=1;
+ if(!clockedIn){const cc=prompt("Clock in: enter your personal code");if(cc===null)return;const who0=byCode(cc);if(!who0){alert("Code not recognized.");return}me.value=who0;const ob=document.getElementById("ovbody");ob.innerHTML=`<p><b>${tasks.filter((t,i)=>!removed.has(i)).length} tasks</b> on the board today:</p><ul>${tasks.filter((t,i)=>!removed.has(i)).map(t=>`<li>${t[0]}</li>`).join("")}</ul><p>Opening list: ${openL.length} items. Closing list: ${closeL.length} items.</p><p>📣 Manager note: Harvest Festival leftovers are on sale, push the older candy.</p>`;document.getElementById("ack").checked=false;document.getElementById("start").disabled=true;document.getElementById("ov").classList.add("show")}
+ else{const oc=prompt("Clock out: enter your personal code");if(oc===null)return;if(byCode(oc)!==me.value){alert("That code doesn't match the person clocked in. Type your own code to clock out.");return}
+ const left=phase==="close"?closeL.length-lists.close.size:0;const last=Object.keys(clocked).length<=1;
   if(phase==="close"&&last){const out=closeL.filter((t,k)=>!lists.close.has(k));const why=closeLocked()?"The closing checklist hasn't been started yet (it unlocks at 3:00 PM).":out.length?"Still outstanding:\n - "+out.join("\n - "):"The closing checklist is all checked off but not signed off yet.";
    const c=prompt("\u26D4 The store can't close until the closing checklist is checked off and signed off.\n\n"+why+"\n\nGo finish it, or:\n- Type INCOMPLETE if it's the end of your shift and you didn't get everything completed (it's logged, carried over to the next closer, and Kristen is flagged).\n- Kristen can enter her code to override.\n\nCancel to go back.");if(c===null)return;
    if(c.trim().toLowerCase()==="incomplete"){const at=new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});carry.length=0;carry.push({by:me.value,at,items:out});liveShift.push({d:"Today",staff:Math.max(peakStaff,1),left:out.length||1,who:me.value});grades.unshift({flag:true,by:me.value,target:"Kristen",status:"flag",at,items:out});overrides.unshift(me.value+" declared at "+at+": did not get everything completed ("+(out.length?out.length+" item"+(out.length>1?"s":"")+" carried over":"list not signed off")+")")}
@@ -211,7 +212,7 @@ function shrink(file,cb){const r=new FileReader();r.onload=()=>{const im=new Ima
 const PHONE=/phone/.test(location.hash+location.search);let phoneUser=null;
 document.getElementById("rst").onclick=e=>{e.preventDefault();localStorage.removeItem(KEY);location.reload()};
 function renderPhone(){if(!PHONE)return;const el=document.getElementById("phbody");
- if(!phoneUser){el.innerHTML='<p>Sign in with your personal code.</p><input id="pc" type="password" inputmode="numeric" placeholder="Your code" style="font-size:20px;padding:10px;width:100%;border-radius:10px;border:2px solid #e0d0f0"><br><br><button class="pb" id="pgo">Sign in</button><div class="note">Demo codes: Kristen 1111, Ava 2222, Jake 3333, Mia 4444, Noah 5555, Haley 6666</div>';document.getElementById("pgo").onclick=()=>{const n=byCode(document.getElementById("pc").value);if(!n){alert("Code not recognized.");return}phoneUser=n;renderPhone()};return}
+ if(!phoneUser){el.innerHTML='<p>Sign in with your personal code.</p><input id="pc" type="password" inputmode="numeric" placeholder="Your code" style="font-size:20px;padding:10px;width:100%;border-radius:10px;border:2px solid #e0d0f0"><br><br><button class="pb" id="pgo">Sign in</button>';document.getElementById("pgo").onclick=()=>{const n=byCode(document.getElementById("pc").value);if(!n){alert("Code not recognized.");return}phoneUser=n;renderPhone()};return}
  let h=`<p>Hi <b>${phoneUser}</b>! <a href="#" id="pout">Sign out</a></p>`;
  const mine=tasks.map((t,i)=>i).filter(i=>awaiting[i]&&awaiting[i].includes(phoneUser));
  h+="<h3>Photos waiting on you</h3>"+(mine.length?mine.map(i=>`<div class="ck"><span>${tasks[i][0]}</span><span style="margin-left:auto"><button class="pb snap" data-i="${i}">📷 Take photo</button></span></div>${i in rejected?`<div class="scoutnote"><b>Hubba's note:</b> ${rejected[i]}</div>`:""}`).join(""):'<div class="note">Nothing waiting. Check off a task on the board first.</div>');
@@ -280,7 +281,7 @@ function renderHB(){const q=(document.getElementById("hbq").value||"").trim().to
  document.getElementById("hblist").innerHTML=hit.map(s=>`<details class="hbi"${q||s.open?" open":""}><summary>${s.title.replace(/</g,"&lt;")}</summary><div class="bd">${hbBody(s.lines,q)}</div></details>`).join("")||'<div class="note">Nothing found. Try another word, or ask Hubba.</div>'}
 document.getElementById("hbq").oninput=renderHB;renderHB();
 function getDoers(isTeam){
- const c=prompt("Enter your personal code (demo codes: Kristen 1111, Ava 2222, Jake 3333, Mia 4444, Noah 5555, Haley 6666)");if(c===null)return null;
+ const c=prompt("Enter your personal code");if(c===null)return null;
  const a=byCode(c);if(!a){alert("Code not recognized. Try again.");return null}
  let names=[a];
  if(isTeam&&confirm("Did you do this together with the other person on shift?\nOK = both of us did it, Cancel = just me")){
@@ -300,12 +301,13 @@ function slowStop(by){slowOn=false;clearInterval(slowTimer);document.getElementB
 document.getElementById("slowack").onclick=()=>{const c=prompt("Enter your code to silence the alert");const p=c&&byCode(c);if(!p){alert("Code not recognized.");return}slowStop(typeof p==="string"?p:(p.name||p))};
 document.getElementById("slowdemo").onclick=slowStart;
 
+if(/[?&#]demo/.test(location.search+location.hash))document.body.classList.add("demo");
 const BACK=/station=back/.test(location.search+location.hash);
 const backItems=[["\uD83C\uDF6B Cook: fudge batch (4 pans)",null],["\uD83C\uDF6C Cook: caramel corn",null],["\uD83C\uDF6D Cook: peanut brittle",null],["\uD83D\uDCE6 Pack: gift boxes for pickup orders",null],["\uD83D\uDCE6 Pack: bulk bags (1 lb)",null],["\uD83C\uDFF7 Label and date everything made today",null],["\uD83E\uDDF9 Clean kitchen station when done",null]];
 const backDone={};
 function renderBack(){const el=document.getElementById("backl");el.innerHTML="";backItems.forEach((it,i)=>{const d=document.createElement("div");d.className="ck"+(backDone[i]?" on":"");d.innerHTML=`<span>${backDone[i]?"\u2705":"\u2B1C"}</span><span>${it[0]}${backDone[i]?`<br><small>Done by: ${backDone[i].join(" + ")}</small>`:""}</span>`;d.onclick=()=>{if(!clockedIn){alert("Clock in first.");return}if(backDone[i]){const n=getDoers(false);if(!n)return;if(n[0]!=="Kristen"&&!backDone[i].includes(n[0])){alert("Only the person who confirmed it, or Kristen, can undo it.");return}delete backDone[i]}else{const n=getDoers(true);if(!n)return;backDone[i]=n}renderBack()};el.appendChild(d)})}
 (function(){renderBack();const st=document.getElementById("stn"),tb=[...document.querySelectorAll(".tabs button")];
-if(BACK){document.getElementById("h1").textContent="Back of House";document.getElementById("hsub").textContent="Cooking and packaging tablet.";tb.forEach(b=>{if(!["back","hb"].includes(b.dataset.t))b.style.display="none"});const pb=tb.find(b=>b.dataset.t==="back");setTimeout(()=>pb.click(),0);st.innerHTML='Back tablet view (demo). <a href="'+location.pathname+'" style="color:#fff">Switch to front of house</a>'}
+if(BACK){document.getElementById("h1").textContent="Back of House";document.getElementById("hsub").textContent="Cooking and packaging tablet.";tb.forEach(b=>{if(!["back","hb"].includes(b.dataset.t))b.style.display="none"});const pb=tb.find(b=>b.dataset.t==="back");setTimeout(()=>pb.click(),0);st.innerHTML='Back of house tablet. <a href="'+location.pathname+'" style="color:#fff">Switch to front of house</a>'}
 else{tb.forEach(b=>{if(b.dataset.t==="back")b.style.display="none"});st.innerHTML='Front-of-house tablet: store cleanliness and keeping the front running. <a href="?station=back" style="color:#fff">Preview the back-of-house tablet</a>'}})();
 
 const SHIFTHIST=[{d:"Mon",staff:3,left:0},{d:"Tue",staff:2,left:3},{d:"Wed",staff:2,left:2},{d:"Thu",staff:4,left:0},{d:"Fri",staff:2,left:4},{d:"Sat",staff:3,left:1},{d:"Sun",staff:2,left:3}];
@@ -347,4 +349,4 @@ me.onchange=()=>{me2.value=me.value;clockedIn=false;acked=false;lists.open.clear
 loadState();render();renderClock();renderLists();
 if(PHONE){document.querySelectorAll('.bar2,.tabs,main').forEach(x=>x.style.display='none');document.getElementById('phone').style.display='block';document.querySelector('header p').textContent='Phone: snap your task photos here';renderPhone()}
 
-</script></body></html>
+</script><footer style="text-align:center;font-size:13px;color:#6b5b7b;padding:14px 10px 22px">📹 You're on camera. Store cameras are recording in this area.</footer></body></html>
